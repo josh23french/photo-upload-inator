@@ -110,7 +110,7 @@ void TetherWindow::displayFullForFilename( QString filename )
         QObject::connect( thread, SIGNAL(finished()), thread, SLOT(deleteLater()));
 
         resizer->setInput(filename);
-        resizer->setSize(QSize(500,500));
+        resizer->setSize(ui->preview->rect().size());
         thread->start();
 
         return;
