@@ -14,6 +14,7 @@ public:
 signals:
     void error();
     void finished( const QImage &output, const QString &filename );
+    void finished();
 
 public slots:
     void setSize( const QSize &size );

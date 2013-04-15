@@ -72,4 +72,5 @@ void FastResizer::start()
         d->input = d->input.scaled(currentSize, currentSize, Qt::KeepAspectRatio, Qt::SmoothTransformation);
     }
     emit finished( d->input, d->inputFilename );
+    emit finished();
 }
