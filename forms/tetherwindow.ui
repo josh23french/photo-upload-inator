@@ -44,25 +44,12 @@
         <verstretch>200</verstretch>
        </sizepolicy>
       </property>
-      <layout class="QHBoxLayout" name="horizontalLayout" stretch="1,0">
+      <layout class="QHBoxLayout" name="horizontalLayout" stretch="0,0">
        <property name="margin">
         <number>0</number>
        </property>
-       <item alignment="Qt::AlignLeft|Qt::AlignTop">
-        <widget class="QLabel" name="preview">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-           <horstretch>1</horstretch>
-           <verstretch>1</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="text">
-          <string/>
-         </property>
-         <property name="scaledContents">
-          <bool>false</bool>
-         </property>
-        </widget>
+       <item>
+        <widget class="QGraphicsView" name="preview"/>
        </item>
        <item>
         <widget class="QListWidget" name="thumbList">
