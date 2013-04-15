@@ -16,7 +16,7 @@
 #include <gphoto2/gphoto2-version.h>
 #include <QGraphicsScene>
 #include <QGraphicsPixmapItem>
-#include <QtConcurrentRun>
+#include <QThread>
 #include <fastresizer.h>
 #include <QTimer>
 
