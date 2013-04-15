@@ -1,5 +1,7 @@
 #include "QDebug"
 #include "mythread.h"
+#include <stdio.h>
+#include <fcntl.h>
 
 MyThread::MyThread(QObject *parent)  { }
 MyThread::~MyThread() { }
@@ -30,6 +32,9 @@ void MyThread::start()
 {
     int retval;
     CameraEventType type;
+    CameraFilePath *cfp;
+    CameraFile *file;
+    int fd;
     void *data;
     qDebug() << "In Thread!!";
 
@@ -48,7 +53,13 @@ void MyThread::start()
         case GP_EVENT_TIMEOUT:
             continue;
         case GP_EVENT_FILE_ADDED:
-            qDebug() << "File added" << data;
+            qDebug() << "File added";
+            cfp = (CameraFilePath*)data;
+            qDebug() << cfp->folder << cfp->name;
+            fd = open("/tmp/test.jpg", O_CREAT | O_WRONLY, 0644);
+            retval = gp_file_new_from_fd(&file, fd);
+            retval = gp_camera_file_get(camera, cfp->folder, cfp->name, GP_FILE_TYPE_NORMAL, file, context);
+            qDebug() << "Got file - " << gp_result_as_string(retval);
             //qDebug() << "Emit Signal";
         case GP_EVENT_CAPTURE_COMPLETE:
             qDebug() << "Capture complete";
