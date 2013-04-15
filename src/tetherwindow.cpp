@@ -17,6 +17,8 @@
 #include <QGraphicsScene>
 #include <QGraphicsPixmapItem>
 #include <QtConcurrentRun>
+#include <fastresizer.h>
+#include <QTimer>
 
 static int _lookup_widget(CameraWidget*widget, const char *key, CameraWidget **child)
 {
@@ -43,18 +45,37 @@ TetherWindow::TetherWindow(QWidget *parent) :
     this->rereadCameraInfo();
     //connect(ui->thumbList, SIGNAL(itemClicked(QListWidgetItem*)), this, SLOT(displayFullForThumb(QListWidgetItem*)));
     connect(completer,SIGNAL(activated(QModelIndex)),this,SLOT(setFamily(QModelIndex)));
+    resizeTimer = new QTimer();
+    resizeTimer->setSingleShot(true);
+    connect(resizeTimer, SIGNAL(timeout()), this, SLOT(displayFullForCurrent()));
 }
 
-void TetherWindow::resizeEvent(QResizeEvent *)
+void TetherWindow::changeEvent(QEvent * event)
 {
-    logMessage("Window resized");
+    if (event->type() == QEvent::WindowStateChange){
+        resizeTimer->stop();
+        displayFullForCurrent();
+    }
+    QMainWindow::changeEvent(event);
+}
+
+void TetherWindow::resizeEvent(QResizeEvent * event)
+{
+    //logMessage("Window resized");
+    qDebug() << "Resize Event: " << isMaximized() << event->size();
 
     cached.clear();
-    logMessage("Cleared cache");
+    //logMessage("Cleared cache");
 
     //qDebug() << "Current filename: " << currentFilename;
+    resizeTimer->stop();
+    resizeTimer->start(300);
+    //displayFullForFilename(currentFilename);
+    //logMessage("Refreshing full image");
+}
+
+void TetherWindow::displayFullForCurrent(){
     displayFullForFilename(currentFilename);
-    logMessage("Refreshing full image");
 }
 
 TetherWindow::~TetherWindow()
@@ -70,35 +91,41 @@ void TetherWindow::displayFullForThumb( QListWidgetItem * thumb)
 
 void TetherWindow::displayFullForFilename( QString filename )
 {
+    if( filename.isEmpty() )
+            return;
     currentFilename = filename;
     qDebug() << "Got filename: " << filename;
     const char * fn = filename.toLocal8Bit();
-    if(!cached[fn]) {
-        QFuture<void> future = QtConcurrent::run(this, &TetherWindow::resizePixmap, currentFilename);
-        QPixmap pic = QPixmap(filename);
-        bool done = false;
-        int currentSize = pic.width();
-        int finalSize = ui->preview->rect().width();
-        if( ui->preview->rect().height() > ui->preview->rect().width())
-            finalSize = ui->preview->rect().height();
-        while(!done){
-            float halfSize = currentSize / 2.0f;
-            float scaleFactor = (float)currentSize / (float)finalSize;
-            if(scaleFactor > 2.0f){
-                currentSize = (int)halfSize + 1;
-            }
-            else {
-                currentSize = finalSize;
-                done = true;
-            }
-            pic = pic.scaled(currentSize, currentSize, Qt::KeepAspectRatio, Qt::SmoothTransformation);
-        }
-        cached[fn] = pic;
-        //delete pic;
+    if( !cached[fn] ) {
+        QThread *thread = new QThread();
+        FastResizer *resizer = new FastResizer();
+        resizer->moveToThread( thread );
+
+        QObject::connect( thread, SIGNAL(started()), resizer, SLOT(start()));
+        QObject::connect( resizer, SIGNAL(finished(const QImage &, const QString &)), this, SLOT(receiveScaled(const QImage &,const QString &)));
+
+        resizer->setInput(QString::fromLocal8Bit(fn));
+        resizer->setSize(QSize(500,500));
+
+        thread->start();
+
+        return;
     }
-    //ui->preview->setPixmap(cached[filename]);
+    displayFullFromPixmap(cached[fn]);
+
+}
+
+void TetherWindow::receiveScaled(QImage image, QString filename)
+{
+    const char * fn = filename.toLocal8Bit();
+    cached[fn] = QPixmap::fromImage(image);
+    displayFullFromPixmap(cached[fn]);
+}
+
+void TetherWindow::displayFullFromPixmap(QPixmap pic)
+{
     QGraphicsScene *scene = new QGraphicsScene();
-    QGraphicsPixmapItem *item = new QGraphicsPixmapItem(cached[fn]);
+    QGraphicsPixmapItem *item = new QGraphicsPixmapItem(pic);
     item->setTransformationMode(Qt::SmoothTransformation);
     scene->addItem(item);
     ui->preview->setScene(scene);

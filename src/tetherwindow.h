@@ -35,6 +35,9 @@ public slots:
     void displayThumbForTethered( const char *filename );
     void displayFullForFilename(QString filename );
     void rereadCameraInfo();
+    void displayFullFromPixmap(QPixmap pic);
+    void receiveScaled(QImage image, QString filename);
+    void displayFullForCurrent();
 
 signals:
     void familyChanged();
@@ -47,7 +50,8 @@ private slots:
     void setFamily(QModelIndex mi);
 
 protected:
-    void resizeEvent(QResizeEvent *);
+    void resizeEvent(QResizeEvent *event);
+    void changeEvent(QEvent *event);
 
 private:
     int result_check(int retval, QString message = "");
@@ -55,6 +59,7 @@ private:
     void uploadImage(CameraFile *cf);
 
     Ui::TetherWindow *ui;
+    QTimer *resizeTimer;
     Cache cached;
     QString currentFilename;
     GPContext *context;
