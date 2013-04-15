@@ -22,7 +22,7 @@ public:
     bool running;
 
 signals:
-    void imageAvailable(CameraFile *cf);
+    void imageAvailable(QString, int);
 
 
 private:

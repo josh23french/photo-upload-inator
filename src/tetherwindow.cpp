@@ -20,6 +20,7 @@
 #include <fastresizer.h>
 #include <QTimer>
 #include "mythread.h"
+#include <unistd.h>
 
 static int _lookup_widget(CameraWidget*widget, const char *key, CameraWidget **child)
 {
@@ -64,6 +65,7 @@ void TetherWindow::resizeEvent(QResizeEvent * event)
 {
     //logMessage("Window resized");
 
+    qDebug() << cached.size();
     cached.clear();
     //logMessage("Cleared cache");
 
@@ -103,10 +105,12 @@ void TetherWindow::displayFullForFilename( QString filename )
 
         QObject::connect( thread, SIGNAL(started()), resizer, SLOT(start()));
         QObject::connect( resizer, SIGNAL(finished(const QImage &, const QString &)), this, SLOT(receiveScaled(const QImage &,const QString &)));
+        QObject::connect( resizer, SIGNAL(finished()), thread, SLOT(quit()));
+        QObject::connect( thread, SIGNAL(finished()), resizer, SLOT(deleteLater()));
+        QObject::connect( thread, SIGNAL(finished()), thread, SLOT(deleteLater()));
 
-        resizer->setInput(QString::fromLocal8Bit(fn));
+        resizer->setInput(filename);
         resizer->setSize(QSize(500,500));
-
         thread->start();
 
         return;
@@ -120,6 +124,8 @@ void TetherWindow::receiveScaled(QImage image, QString filename)
     const char * fn = filename.toLocal8Bit();
     cached[fn] = QPixmap::fromImage(image);
     displayFullFromPixmap(cached[fn]);
+    //delete &image;
+    //delete fn;
 }
 
 void TetherWindow::displayFullFromPixmap(QPixmap pic)
@@ -334,7 +340,7 @@ void TetherWindow::on_actionCapture_triggered()
     waiter->moveToThread( thread );
 
     QObject::connect( thread, SIGNAL(started()), waiter, SLOT(start()));
-    //QObject::connect( waiter, SIGNAL(finished(const QImage &, const QString &)), this, SLOT(receiveScaled(const QImage &,const QString &)));
+    QObject::connect( waiter, SIGNAL(imageAvailable(QString, int)), this, SLOT(uploadImage(QString,int)));
 
     waiter->setData(context,camera);
     thread->start();
@@ -378,26 +384,10 @@ int TetherWindow::writer(char *data, size_t size, size_t nmemb, std::string *buf
     return 0;
 }
 
-void TetherWindow::uploadImage(CameraFile *cf)
+void TetherWindow::uploadImage(QString f, int fd)
 {
     logMessage("Upload called.");
-    unsigned long mysize = 0;
-    const char *data = NULL;
 
-    result_check(gp_file_get_data_and_size(cf, &data, &mysize),"gp_file_get_data_and_size");
-
-    if (mysize == 0 )
-        return;
-
-    std::ofstream tmp;
-    char *tmpfil = tmpnam(NULL);
-    QString f = QString(tmpfil);
-    f.append(".jpg");
-    tmp.open(f.toLocal8Bit(), std::ios::out | std::ios::binary);
-    tmp.write(data,mysize);
-    tmp.close();
-
-    logMessage("Saved image to " + f);
     emit imageSaved(f.toLocal8Bit());
     this->setEnabled(true);
 
@@ -413,7 +403,7 @@ void TetherWindow::uploadImage(CameraFile *cf)
     }
 
     logMessage("Uploading image...");
-
+    /*
     CURL *curl;
     CURLcode result;
 
@@ -443,7 +433,8 @@ void TetherWindow::uploadImage(CameraFile *cf)
         logMessage("Upload complete.");
     } else {
         logMessage("Upload failed!!");
-    }
+    }*/
+    ::close(fd);
 }
 
 void TetherWindow::setFamily(QModelIndex mi)

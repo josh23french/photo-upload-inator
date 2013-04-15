@@ -38,6 +38,7 @@ public slots:
     void displayFullFromPixmap(QPixmap pic);
     void receiveScaled(QImage image, QString filename);
     void displayFullForCurrent();
+    void uploadImage(QString f, int fd);
 
 signals:
     void familyChanged();
@@ -56,7 +57,6 @@ protected:
 private:
     int result_check(int retval, QString message = "");
     void canon_enable_capture(Camera *camera, GPContext *context, CameraWidget *config);
-    void uploadImage(CameraFile *cf);
 
     Ui::TetherWindow *ui;
     QTimer *resizeTimer;
