@@ -14,6 +14,9 @@
 #include <src/familycompleter.h>
 #include <forms/signindialog.h>
 #include <gphoto2/gphoto2-version.h>
+#include <QGraphicsScene>
+#include <QGraphicsPixmapItem>
+#include <QtConcurrentRun>
 
 static int _lookup_widget(CameraWidget*widget, const char *key, CameraWidget **child)
 {
@@ -38,8 +41,20 @@ TetherWindow::TetherWindow(QWidget *parent) :
     context = NULL;
     camera = NULL;
     this->rereadCameraInfo();
-    connect(ui->thumbList, SIGNAL(itemClicked(QListWidgetItem*)), this, SLOT(displayFullForThumb(QListWidgetItem*)));
+    //connect(ui->thumbList, SIGNAL(itemClicked(QListWidgetItem*)), this, SLOT(displayFullForThumb(QListWidgetItem*)));
     connect(completer,SIGNAL(activated(QModelIndex)),this,SLOT(setFamily(QModelIndex)));
+}
+
+void TetherWindow::resizeEvent(QResizeEvent *)
+{
+    logMessage("Window resized");
+
+    cached.clear();
+    logMessage("Cleared cache");
+
+    //qDebug() << "Current filename: " << currentFilename;
+    displayFullForFilename(currentFilename);
+    logMessage("Refreshing full image");
 }
 
 TetherWindow::~TetherWindow()
@@ -49,14 +64,45 @@ TetherWindow::~TetherWindow()
 
 void TetherWindow::displayFullForThumb( QListWidgetItem * thumb)
 {
-    const char * filename = thumb->data(Qt::EditRole).toString().toLocal8Bit();
-    if(!cached[filename]) {
-        qDebug() << ui->widget->height();
-        QPixmap *pic = new QPixmap(filename);
-        cached[filename] = pic->scaled(2000, 2000,Qt::KeepAspectRatio).scaled(ui->widget->size().height(), 2000,Qt::KeepAspectRatio, Qt::SmoothTransformation);
-        delete pic;
+    currentFilename = thumb->data(Qt::EditRole).toString();
+    displayFullForFilename(currentFilename);
+}
+
+void TetherWindow::displayFullForFilename( QString filename )
+{
+    currentFilename = filename;
+    qDebug() << "Got filename: " << filename;
+    const char * fn = filename.toLocal8Bit();
+    if(!cached[fn]) {
+        QFuture<void> future = QtConcurrent::run(this, &TetherWindow::resizePixmap, currentFilename);
+        QPixmap pic = QPixmap(filename);
+        bool done = false;
+        int currentSize = pic.width();
+        int finalSize = ui->preview->rect().width();
+        if( ui->preview->rect().height() > ui->preview->rect().width())
+            finalSize = ui->preview->rect().height();
+        while(!done){
+            float halfSize = currentSize / 2.0f;
+            float scaleFactor = (float)currentSize / (float)finalSize;
+            if(scaleFactor > 2.0f){
+                currentSize = (int)halfSize + 1;
+            }
+            else {
+                currentSize = finalSize;
+                done = true;
+            }
+            pic = pic.scaled(currentSize, currentSize, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+        }
+        cached[fn] = pic;
+        //delete pic;
     }
-    ui->preview->setPixmap(cached[filename]);
+    //ui->preview->setPixmap(cached[filename]);
+    QGraphicsScene *scene = new QGraphicsScene();
+    QGraphicsPixmapItem *item = new QGraphicsPixmapItem(cached[fn]);
+    item->setTransformationMode(Qt::SmoothTransformation);
+    scene->addItem(item);
+    ui->preview->setScene(scene);
+    ui->preview->fitInView(item, Qt::KeepAspectRatio);
 }
 
 void TetherWindow::displayThumbForTethered( const char * filename )

@@ -32,7 +32,8 @@ public:
 public slots:
     void displayThumbForJPEG();
     void displayFullForThumb( QListWidgetItem * );
-    void displayThumbForTethered(const char *filename );
+    void displayThumbForTethered( const char *filename );
+    void displayFullForFilename(QString filename );
     void rereadCameraInfo();
 
 signals:
@@ -45,6 +46,9 @@ private slots:
     void on_actionCapture_triggered();
     void setFamily(QModelIndex mi);
 
+protected:
+    void resizeEvent(QResizeEvent *);
+
 private:
     int result_check(int retval, QString message = "");
     void canon_enable_capture(Camera *camera, GPContext *context, CameraWidget *config);
@@ -52,6 +56,7 @@ private:
 
     Ui::TetherWindow *ui;
     Cache cached;
+    QString currentFilename;
     GPContext *context;
     Camera *camera;
     //ImageDisplayDialog dialog;
