@@ -16,3 +16,5 @@ ui_.*.h
 Makefile
 *-build-*
 tmp
+LBCPhotoTether
+cookies.txt
