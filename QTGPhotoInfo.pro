@@ -5,7 +5,8 @@ HEADERS += src/infodialog.h \
     src/tetherthumb.h \
     src/tetherwindow.h \
     abortablenetworkreply.h \
-    forms/signindialog.h
+    forms/signindialog.h \
+    fastresizer.h
 SOURCES += src/infodialog.cpp \
     src/main.cpp \
     src/imagedisplaydialog.cpp \
@@ -14,7 +15,8 @@ SOURCES += src/infodialog.cpp \
     src/tetherthumb.cpp \
     src/tetherwindow.cpp \
     abortablenetworkreply.cpp \
-    forms/signindialog.cpp
+    forms/signindialog.cpp \
+    fastresizer.cpp
 FORMS += forms/infodialog.ui \
     forms/imagedisplaydialog.ui \
     forms/settingsdialog.ui \
