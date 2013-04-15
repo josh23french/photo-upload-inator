@@ -62,14 +62,13 @@ void TetherWindow::changeEvent(QEvent * event)
 void TetherWindow::resizeEvent(QResizeEvent * event)
 {
     //logMessage("Window resized");
-    qDebug() << "Resize Event: " << isMaximized() << event->size();
 
     cached.clear();
     //logMessage("Cleared cache");
 
     //qDebug() << "Current filename: " << currentFilename;
     resizeTimer->stop();
-    resizeTimer->start(300);
+    resizeTimer->start(200);
     //displayFullForFilename(currentFilename);
     //logMessage("Refreshing full image");
 }
