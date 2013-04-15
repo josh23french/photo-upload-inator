@@ -439,7 +439,7 @@ void InfoDialog::on_pb_capture_preview_clicked()
 
     thread.mysleep(1);
 
-    thread.quit();
+    //thread.quit();
 
     this->setEnabled(true);
 }

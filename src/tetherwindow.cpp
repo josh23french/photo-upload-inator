@@ -19,6 +19,7 @@
 #include <QThread>
 #include <fastresizer.h>
 #include <QTimer>
+#include "mythread.h"
 
 static int _lookup_widget(CameraWidget*widget, const char *key, CameraWidget **child)
 {
@@ -328,6 +329,24 @@ void TetherWindow::on_actionCapture_triggered()
     this->setEnabled(false);
     QApplication::processEvents();
 
+    QThread *thread = new QThread();
+    MyThread *waiter = new MyThread();
+    waiter->moveToThread( thread );
+
+    QObject::connect( thread, SIGNAL(started()), waiter, SLOT(start()));
+    //QObject::connect( waiter, SIGNAL(finished(const QImage &, const QString &)), this, SLOT(receiveScaled(const QImage &,const QString &)));
+
+    waiter->setData(context,camera);
+    thread->start();
+    qDebug() << "Thread started";
+    //dialog.exec();
+    //qDebug() << "Dialog returned";
+    //thread.running = false;
+
+    //thread.mysleep(1);
+
+    //thread.quit();
+    /*
     CameraFilePath cfp;
     CameraFile *cf;
 
@@ -341,7 +360,7 @@ void TetherWindow::on_actionCapture_triggered()
     QString a = QString("Image Capture - ");
     uploadImage(cf);
     //setImage(cf, a);
-    //dialog.exec();
+    //dialog.exec();*/
 }
 
 int TetherWindow::writer(char *data, size_t size, size_t nmemb, std::string *buffer_in)

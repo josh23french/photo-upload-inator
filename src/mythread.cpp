@@ -1,7 +1,7 @@
 #include "QDebug"
 #include "mythread.h"
 
-MyThread::MyThread()  { }
+MyThread::MyThread(QObject *parent)  { }
 MyThread::~MyThread() { }
 
 
@@ -26,21 +26,38 @@ int MyThread::result_check(int retval, QString message) {
 }
 
 
-void MyThread::run()
+void MyThread::start()
 {
+    int retval;
+    CameraEventType type;
+    void *data;
+    qDebug() << "In Thread!!";
+
     while (running)
     {
-        CameraFile *cf;
-        result_check( gp_file_new(&cf),"gp_file_new" );
-        result_check( gp_camera_capture_preview( camera, cf, context ),"gp_camera_capture_preview");
-
-        //qDebug() << "Emit Signal";
-        emit previewAvailable(cf);
-
+        retval = gp_camera_wait_for_event(camera, 200, &type, &data, context);
+        //qDebug() << "Waiting - retval: " << retval;
+        if( retval != 0 ){
+            qDebug() << "Error!! " << gp_result_as_string(retval);
+            break;
+        }
+        switch( type )
+        {
+        case GP_EVENT_UNKNOWN:
+        case GP_EVENT_FOLDER_ADDED:
+        case GP_EVENT_TIMEOUT:
+            continue;
+        case GP_EVENT_FILE_ADDED:
+            qDebug() << "File added" << data;
+            //qDebug() << "Emit Signal";
+        case GP_EVENT_CAPTURE_COMPLETE:
+            qDebug() << "Capture complete";
+            //emit imageAvailable(cf);
+        }
     }
 }
 
 void MyThread::mysleep(unsigned long time)
 {
-    sleep(time);
+    //sleep(time);
 }

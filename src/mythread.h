@@ -4,23 +4,25 @@
 #include <QThread>
 #include <gphoto2/gphoto2-camera.h>
 
-class MyThread : public QThread
+class MyThread : public QObject
 {
     Q_OBJECT
 
+public slots:
+    void start();
+
 public:
-    MyThread();
+    explicit MyThread(QObject *parent = 0);
     ~MyThread();
 
     void setData(GPContext *lcontext, Camera *lcamera);
     int result_check(int retval, QString message);
 
-    void run();
     void mysleep(unsigned long time);
     bool running;
 
 signals:
-    void previewAvailable(CameraFile *cf);
+    void imageAvailable(CameraFile *cf);
 
 
 private:
