@@ -323,6 +323,8 @@ void TetherWindow::on_actionDetect_Camer_triggered()
 
 void TetherWindow::on_actionCapture_triggered()
 {
+    if(camera == NULL)
+         return;
     this->setEnabled(false);
     QApplication::processEvents();
 
