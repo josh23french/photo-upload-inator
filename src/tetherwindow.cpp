@@ -442,5 +442,9 @@ void TetherWindow::setFamily(QModelIndex mi)
     this->family = mi;
     this->family_id = mi.sibling(mi.row(), 1).data().toDouble();
     ui->familyGrp->setTitle("Family: " + this->family.data().toString().replace(" & "," && ") + " (" + QString::number(this->family_id) + ")");
+    //qDebug() << "setFamily() - - - - " << ui->searchbox->text();
+    //ui->searchbox->setText("HELP!");
+    QTimer::singleShot(40, ui->searchbox, SLOT(clear()));
+    //qDebug() << "deletedText";
     emit familyChanged();
 }

@@ -14,8 +14,10 @@ class FamilyCompleter : public QCompleter
     Q_OBJECT
 public:
     explicit FamilyCompleter(QObject *parent = 0);
+    ~FamilyCompleter();
 signals:
     void log(QString);
+    void abortOthers();
 public slots:
     void update(QString text);
 private slots:
@@ -27,6 +29,7 @@ private:
     QString endpoint;
     QNetworkAccessManager * networkManager;
     QNetworkReply* currentReply;
+    //QNetworkRequest currentRequest;
     QJson::Parser parser;
     bool ok;
 };

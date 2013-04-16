@@ -29,9 +29,16 @@
       <property name="title">
        <string>Family</string>
       </property>
-      <layout class="QVBoxLayout" name="verticalLayout">
+      <layout class="QHBoxLayout" name="horizontalLayout_2">
        <item>
         <widget class="QLineEdit" name="searchbox"/>
+       </item>
+       <item>
+        <widget class="QPushButton" name="pushButton">
+         <property name="text">
+          <string>Start</string>
+         </property>
+        </widget>
        </item>
       </layout>
      </widget>
@@ -193,6 +200,22 @@
     <hint type="destinationlabel">
      <x>152</x>
      <y>140</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pushButton</sender>
+   <signal>pressed()</signal>
+   <receiver>actionCapture</receiver>
+   <slot>trigger()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>522</x>
+     <y>70</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>291</x>
+     <y>279</y>
     </hint>
    </hints>
   </connection>
