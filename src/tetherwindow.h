@@ -48,7 +48,7 @@ private slots:
     void on_actionSign_in_triggered();
     void on_actionDetect_Camer_triggered();
     void on_actionCapture_triggered();
-    void setFamily(QModelIndex mi);
+    void setFamily(QString fam, QString familyId);
 
 protected:
     void resizeEvent(QResizeEvent *event);
@@ -66,7 +66,7 @@ private:
     Camera *camera;
     //ImageDisplayDialog dialog;
     FamilyCompleter *completer;
-    QModelIndex family;
+    QString family;
     double family_id;
 };
 

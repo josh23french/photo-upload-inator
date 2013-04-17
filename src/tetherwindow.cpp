@@ -38,15 +38,16 @@ TetherWindow::TetherWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    FamilyCompleter *completer = new FamilyCompleter(this);
-    ui->searchbox->setCompleter(completer);
-    connect(ui->searchbox,SIGNAL(textEdited(QString)),completer,SLOT(update(QString)));
+    //FamilyCompleter *completer = new FamilyCompleter(this);
+    //ui->searchbox->setCompleter(completer);
+    //connect(ui->searchbox,SIGNAL(textEdited(QString)),completer,SLOT(update(QString)));
+    connect(ui->searchbox->completer, SIGNAL(doneCompletion(QString,QString)), this, SLOT(setFamily(QString,QString)));
     this->family_id = 0;
     context = NULL;
     camera = NULL;
     this->rereadCameraInfo();
     //connect(ui->thumbList, SIGNAL(itemClicked(QListWidgetItem*)), this, SLOT(displayFullForThumb(QListWidgetItem*)));
-    connect(completer,SIGNAL(activated(QModelIndex)),this,SLOT(setFamily(QModelIndex)));
+    //connect(completer,SIGNAL(activated(QModelIndex)),this,SLOT(setFamily(QModelIndex)));
     resizeTimer = new QTimer();
     resizeTimer->setSingleShot(true);
     connect(resizeTimer, SIGNAL(timeout()), this, SLOT(displayFullForCurrent()));
@@ -437,14 +438,15 @@ void TetherWindow::uploadImage(QString f, int fd)
     ::close(fd);
 }
 
-void TetherWindow::setFamily(QModelIndex mi)
+void TetherWindow::setFamily(QString fam, QString familyId)
 {
-    this->family = mi;
-    this->family_id = mi.sibling(mi.row(), 1).data().toDouble();
-    ui->familyGrp->setTitle("Family: " + this->family.data().toString().replace(" & "," && ") + " (" + QString::number(this->family_id) + ")");
+    this->family = fam;
+    //this->family_id = mi.sibling(mi.row(), 1).data().toDouble();
+    this->family_id = familyId.toDouble();
+    ui->familyGrp->setTitle("Family: " + this->family.replace(" & "," && ") + " (" + QString::number(this->family_id) + ")");
     //qDebug() << "setFamily() - - - - " << ui->searchbox->text();
     //ui->searchbox->setText("HELP!");
-    QTimer::singleShot(40, ui->searchbox, SLOT(clear()));
+    //QTimer::singleShot(40, ui->searchbox, SLOT(clear()));
     //qDebug() << "deletedText";
     emit familyChanged();
 }
