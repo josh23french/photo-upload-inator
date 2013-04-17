@@ -1,7 +1,6 @@
 HEADERS += src/infodialog.h \
     src/imagedisplaydialog.h \
     src/mythread.h \
-    src/familycompleter.h \
     src/tetherthumb.h \
     src/tetherwindow.h \
     abortablenetworkreply.h \
@@ -13,7 +12,6 @@ SOURCES += src/infodialog.cpp \
     src/main.cpp \
     src/imagedisplaydialog.cpp \
     src/mythread.cpp \
-    src/familycompleter.cpp \
     src/tetherthumb.cpp \
     src/tetherwindow.cpp \
     abortablenetworkreply.cpp \
