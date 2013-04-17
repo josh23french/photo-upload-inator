@@ -31,7 +31,7 @@
       </property>
       <layout class="QHBoxLayout" name="horizontalLayout_2">
        <item>
-        <widget class="QLineEdit" name="searchbox"/>
+        <widget class="SearchBox" name="searchbox"/>
        </item>
        <item>
         <widget class="QPushButton" name="pushButton">
@@ -169,6 +169,13 @@
    </property>
   </action>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>SearchBox</class>
+   <extends>QLineEdit</extends>
+   <header>searchbox.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections>
   <connection>
