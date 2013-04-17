@@ -11,7 +11,6 @@
 #include "QMessageBox"
 #include "QDebug"
 #include "curl/curl.h"
-#include <src/familycompleter.h>
 #include <forms/signindialog.h>
 #include <gphoto2/gphoto2-version.h>
 #include <QGraphicsScene>
@@ -48,16 +47,16 @@ TetherWindow::TetherWindow(QWidget *parent) :
     this->rereadCameraInfo();
     //connect(ui->thumbList, SIGNAL(itemClicked(QListWidgetItem*)), this, SLOT(displayFullForThumb(QListWidgetItem*)));
     //connect(completer,SIGNAL(activated(QModelIndex)),this,SLOT(setFamily(QModelIndex)));
-    resizeTimer = new QTimer();
-    resizeTimer->setSingleShot(true);
-    connect(resizeTimer, SIGNAL(timeout()), this, SLOT(displayFullForCurrent()));
+    //resizeTimer = new QTimer();
+    //resizeTimer->setSingleShot(true);
+    //connect(resizeTimer, SIGNAL(timeout()), this, SLOT(displayFullForCurrent()));
 }
 
 void TetherWindow::changeEvent(QEvent * event)
 {
     if (event->type() == QEvent::WindowStateChange){
-        resizeTimer->stop();
-        displayFullForCurrent();
+        //resizeTimer->stop();
+        //displayFullForCurrent();
     }
     QMainWindow::changeEvent(event);
 }
@@ -66,13 +65,13 @@ void TetherWindow::resizeEvent(QResizeEvent * event)
 {
     //logMessage("Window resized");
 
-    qDebug() << cached.size();
-    cached.clear();
+    //qDebug() << cached.size();
+    //cached.clear();
     //logMessage("Cleared cache");
 
     //qDebug() << "Current filename: " << currentFilename;
-    resizeTimer->stop();
-    resizeTimer->start(200);
+   // resizeTimer->stop();
+    //resizeTimer->start(200);
     //displayFullForFilename(currentFilename);
     //logMessage("Refreshing full image");
 }
@@ -98,45 +97,8 @@ void TetherWindow::displayFullForFilename( QString filename )
             return;
     currentFilename = filename;
     qDebug() << "Got filename: " << filename;
-    const char * fn = filename.toLocal8Bit();
-    if( !cached[fn] ) {
-        QThread *thread = new QThread();
-        FastResizer *resizer = new FastResizer();
-        resizer->moveToThread( thread );
-
-        QObject::connect( thread, SIGNAL(started()), resizer, SLOT(start()));
-        QObject::connect( resizer, SIGNAL(finished(const QImage &, const QString &)), this, SLOT(receiveScaled(const QImage &,const QString &)));
-        QObject::connect( resizer, SIGNAL(finished()), thread, SLOT(quit()));
-        QObject::connect( thread, SIGNAL(finished()), resizer, SLOT(deleteLater()));
-        QObject::connect( thread, SIGNAL(finished()), thread, SLOT(deleteLater()));
-
-        resizer->setInput(filename);
-        resizer->setSize(ui->preview->rect().size());
-        thread->start();
-
-        return;
-    }
-    displayFullFromPixmap(cached[fn]);
-
-}
-
-void TetherWindow::receiveScaled(QImage image, QString filename)
-{
-    const char * fn = filename.toLocal8Bit();
-    cached[fn] = QPixmap::fromImage(image);
-    displayFullFromPixmap(cached[fn]);
-    //delete &image;
-    //delete fn;
-}
-
-void TetherWindow::displayFullFromPixmap(QPixmap pic)
-{
-    QGraphicsScene *scene = new QGraphicsScene();
-    QGraphicsPixmapItem *item = new QGraphicsPixmapItem(pic);
-    item->setTransformationMode(Qt::SmoothTransformation);
-    scene->addItem(item);
-    ui->preview->setScene(scene);
-    ui->preview->fitInView(item, Qt::KeepAspectRatio);
+    ui->preview->setPicture(filename);
+    return;
 }
 
 void TetherWindow::displayThumbForTethered( const char * filename )

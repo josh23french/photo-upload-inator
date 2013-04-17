@@ -1,4 +1,4 @@
-HEADERS += src/infodialog.h \
+HEADERS += \
     src/imagedisplaydialog.h \
     src/mythread.h \
     src/tetherthumb.h \
@@ -7,8 +7,9 @@ HEADERS += src/infodialog.h \
     forms/signindialog.h \
     fastresizer.h \
     src/familycompletion.h \
-    src/searchbox.h
-SOURCES += src/infodialog.cpp \
+    src/searchbox.h \
+    src/previewgraphicsview.h
+SOURCES += \
     src/main.cpp \
     src/imagedisplaydialog.cpp \
     src/mythread.cpp \
@@ -18,7 +19,8 @@ SOURCES += src/infodialog.cpp \
     forms/signindialog.cpp \
     fastresizer.cpp \
     src/familycompletion.cpp \
-    src/searchbox.cpp
+    src/searchbox.cpp \
+    src/previewgraphicsview.cpp
 FORMS += forms/infodialog.ui \
     forms/imagedisplaydialog.ui \
     forms/settingsdialog.ui \

@@ -6,7 +6,6 @@
 #include <map>
 #include <string>
 #include <QListWidgetItem>
-#include <src/familycompleter.h>
 #include <gphoto2/gphoto2-camera.h>
 
 namespace Ui {
@@ -35,8 +34,6 @@ public slots:
     void displayThumbForTethered( const char *filename );
     void displayFullForFilename(QString filename );
     void rereadCameraInfo();
-    void displayFullFromPixmap(QPixmap pic);
-    void receiveScaled(QImage image, QString filename);
     void displayFullForCurrent();
     void uploadImage(QString f, int fd);
 
@@ -65,7 +62,7 @@ private:
     GPContext *context;
     Camera *camera;
     //ImageDisplayDialog dialog;
-    FamilyCompleter *completer;
+    //FamilyCompleter *completer;
     QString family;
     double family_id;
 };
