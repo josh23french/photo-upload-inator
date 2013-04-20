@@ -91,7 +91,7 @@
      <x>0</x>
      <y>0</y>
      <width>583</width>
-     <height>23</height>
+     <height>27</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -99,6 +99,7 @@
      <string>File</string>
     </property>
     <addaction name="actionSign_in"/>
+    <addaction name="actionSettings"/>
     <addaction name="actionQuit"/>
    </widget>
    <widget class="QMenu" name="menuCamera">
@@ -136,6 +137,9 @@
    </property>
   </action>
   <action name="actionInfo">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="text">
     <string>Information</string>
    </property>
@@ -143,16 +147,6 @@
   <action name="actionDetect_Camer">
    <property name="text">
     <string>Detect Camera</string>
-   </property>
-  </action>
-  <action name="actionLog">
-   <property name="text">
-    <string>Event Log</string>
-   </property>
-  </action>
-  <action name="actionLogin">
-   <property name="text">
-    <string>Login</string>
    </property>
   </action>
   <action name="actionSign_in">
@@ -166,6 +160,17 @@
   <action name="actionCapture">
    <property name="text">
     <string>Capture</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+C</string>
+   </property>
+  </action>
+  <action name="actionSettings">
+   <property name="text">
+    <string>Settings...</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+S</string>
    </property>
   </action>
  </widget>
@@ -231,8 +236,25 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>actionSettings</sender>
+   <signal>triggered()</signal>
+   <receiver>TetherWindow</receiver>
+   <slot>showSettingsDialog()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>291</x>
+     <y>279</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>displayThumbForJPEG()</slot>
+  <slot>showSettingsDialog()</slot>
  </slots>
 </ui>

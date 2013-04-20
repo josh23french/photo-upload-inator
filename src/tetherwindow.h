@@ -33,9 +33,12 @@ public slots:
     void displayFullForThumb( QListWidgetItem * );
     void displayThumbForTethered( const char *filename );
     void displayFullForFilename(QString filename );
-    void rereadCameraInfo();
     void displayFullForCurrent();
+
+    void rereadCameraInfo();
     void uploadImage(QString f, int fd);
+
+    void showSettingsDialog();
 
 signals:
     void familyChanged();

@@ -20,6 +20,7 @@
 #include <QTimer>
 #include "mythread.h"
 #include <unistd.h>
+#include "settingsdialog.h"
 
 static int _lookup_widget(CameraWidget*widget, const char *key, CameraWidget **child)
 {
@@ -83,6 +84,13 @@ void TetherWindow::displayFullForCurrent(){
 TetherWindow::~TetherWindow()
 {
     delete ui;
+}
+
+void TetherWindow::showSettingsDialog()
+{
+    SettingsDialog *sd = new SettingsDialog(this);
+    sd->exec();
+    sd->deleteLater();
 }
 
 void TetherWindow::displayFullForThumb( QListWidgetItem * thumb)
