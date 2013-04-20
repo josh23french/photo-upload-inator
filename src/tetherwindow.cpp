@@ -21,6 +21,7 @@
 #include "mythread.h"
 #include <unistd.h>
 #include "settingsdialog.h"
+#include <QWindowStateChangeEvent>
 
 static int _lookup_widget(CameraWidget*widget, const char *key, CameraWidget **child)
 {
@@ -40,8 +41,14 @@ TetherWindow::TetherWindow(QWidget *parent) :
 
     QSettings settings;
     settings.beginGroup("MainWindow");
-    resize(settings.value("size", QSize(400, 400)).toSize());
-    move(settings.value("pos", QPoint(200, 200)).toPoint());
+    restoreGeometry(settings.value("geometry").toByteArray());
+    restoreState(settings.value("state").toByteArray());
+    move(settings.value("pos", QPoint(100, 100)).toPoint());
+    resize(settings.value("size", QSize(800, 600)).toSize());
+    if( settings.value("maximized", isMaximized()).toBool() ) {
+        showMaximized();
+    }
+
     settings.endGroup();
 
     //FamilyCompleter *completer = new FamilyCompleter(this);
@@ -59,41 +66,42 @@ TetherWindow::TetherWindow(QWidget *parent) :
     //connect(resizeTimer, SIGNAL(timeout()), this, SLOT(displayFullForCurrent()));
 }
 
-void TetherWindow::changeEvent(QEvent * event)
+void TetherWindow::moveEvent(QMoveEvent *event)
 {
-    if (event->type() == QEvent::WindowStateChange){
-        //resizeTimer->stop();
-        //displayFullForCurrent();
-    }
-    QMainWindow::changeEvent(event);
+    writeGeometry();
 }
 
 void TetherWindow::resizeEvent(QResizeEvent * event)
 {
-    //logMessage("Window resized");
-
-    //qDebug() << cached.size();
-    //cached.clear();
-    //logMessage("Cleared cache");
-
-    //qDebug() << "Current filename: " << currentFilename;
-   // resizeTimer->stop();
-    //resizeTimer->start(200);
-    //displayFullForFilename(currentFilename);
-    //logMessage("Refreshing full image");
+    writeGeometry();
 }
 
 void TetherWindow::displayFullForCurrent(){
     displayFullForFilename(currentFilename);
 }
 
-TetherWindow::~TetherWindow()
+void TetherWindow::writeGeometry()
 {
     QSettings settings;
-    settings.beginGroup("MainWindow");
-    settings.setValue("size", size());
-    settings.setValue("pos", pos());
+    settings.beginGroup( "MainWindow" );
+    settings.setValue( "geometry", saveGeometry() );
+    settings.setValue( "state", saveState() );
+    settings.setValue( "maximized", isMaximized() );
+    if( !isMaximized() ) {
+        settings.setValue( "size", size() );
+        settings.setValue( "pos", pos() );
+        qDebug() << "WINDOW IS NOT MAXIMIZED" << size() << pos();
+    }
     settings.endGroup();
+}
+
+void TetherWindow::closeEvent(QCloseEvent *event)
+{
+    writeGeometry();
+}
+
+TetherWindow::~TetherWindow()
+{
     delete ui;
 }
 

@@ -52,11 +52,13 @@ private slots:
 
 protected:
     void resizeEvent(QResizeEvent *event);
-    void changeEvent(QEvent *event);
+    void closeEvent(QCloseEvent *event);
+    void moveEvent(QMoveEvent *event);
 
 private:
     int result_check(int retval, QString message = "");
     void canon_enable_capture(Camera *camera, GPContext *context, CameraWidget *config);
+    void writeGeometry();
 
     Ui::TetherWindow *ui;
     QTimer *resizeTimer;
@@ -68,6 +70,8 @@ private:
     //FamilyCompleter *completer;
     QString family;
     double family_id;
+    QPoint normalpos;
+    QSize normalsize;
 };
 
 #endif // TETHERWINDOW_H
