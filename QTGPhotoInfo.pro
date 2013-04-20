@@ -8,7 +8,8 @@ HEADERS += \
     fastresizer.h \
     src/familycompletion.h \
     src/searchbox.h \
-    src/previewgraphicsview.h
+    src/previewgraphicsview.h \
+    forms/settingsdialog.h
 SOURCES += \
     src/main.cpp \
     src/imagedisplaydialog.cpp \
@@ -20,7 +21,8 @@ SOURCES += \
     fastresizer.cpp \
     src/familycompletion.cpp \
     src/searchbox.cpp \
-    src/previewgraphicsview.cpp
+    src/previewgraphicsview.cpp \
+    forms/settingsdialog.cpp
 FORMS += forms/infodialog.ui \
     forms/imagedisplaydialog.ui \
     forms/settingsdialog.ui \
