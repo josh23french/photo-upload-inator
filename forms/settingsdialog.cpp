@@ -22,9 +22,9 @@ SettingsDialog::SettingsDialog(QWidget *parent) :
 void SettingsDialog::changed()
 {
     QSettings settings;
-    //qDebug() << (ui->signoutonquit->isChecked() == settings.value("signoutonquit", true).toBool());
+    qDebug() << (ui->signoutonquit->isChecked() == settings.value("signoutonquit", true).toBool());
     if( (ui->signoutonquit->isChecked() == settings.value("signoutonquit", true).toBool())
-            xor (ui->keeptempfiles->isChecked() == settings.value("keeptempfiles", false).toBool()))
+            or (ui->keeptempfiles->isChecked() == settings.value("keeptempfiles", false).toBool()))
     {
         ui->buttons->button(QDialogButtonBox::Apply)->setEnabled(true);
     } else {
