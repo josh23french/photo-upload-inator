@@ -68,12 +68,14 @@ TetherWindow::TetherWindow(QWidget *parent) :
 
 void TetherWindow::moveEvent(QMoveEvent *event)
 {
-    writeGeometry();
+    QTimer::singleShot(10, this, SLOT(writeGeometry()));
+    //DUMBEST HACK EVER. STUPID QT.
 }
 
 void TetherWindow::resizeEvent(QResizeEvent * event)
 {
-    writeGeometry();
+    QTimer::singleShot(10, this, SLOT(writeGeometry()));
+    //DUMBEST HACK EVER. STUPID QT.
 }
 
 void TetherWindow::displayFullForCurrent(){
@@ -90,7 +92,7 @@ void TetherWindow::writeGeometry()
     if( !isMaximized() ) {
         settings.setValue( "size", size() );
         settings.setValue( "pos", pos() );
-        qDebug() << "WINDOW IS NOT MAXIMIZED" << size() << pos();
+        //qDebug() << "WINDOW IS NOT MAXIMIZED" << size() << pos();
     }
     settings.endGroup();
 }

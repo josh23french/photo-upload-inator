@@ -49,6 +49,7 @@ private slots:
     void on_actionDetect_Camer_triggered();
     void on_actionCapture_triggered();
     void setFamily(QString fam, QString familyId);
+    void writeGeometry();
 
 protected:
     void resizeEvent(QResizeEvent *event);
@@ -58,7 +59,6 @@ protected:
 private:
     int result_check(int retval, QString message = "");
     void canon_enable_capture(Camera *camera, GPContext *context, CameraWidget *config);
-    void writeGeometry();
 
     Ui::TetherWindow *ui;
     QTimer *resizeTimer;
