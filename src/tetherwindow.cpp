@@ -37,6 +37,12 @@ TetherWindow::TetherWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
+    QSettings settings;
+    settings.beginGroup("MainWindow");
+    resize(settings.value("size", QSize(400, 400)).toSize());
+    move(settings.value("pos", QPoint(200, 200)).toPoint());
+    settings.endGroup();
+
     //FamilyCompleter *completer = new FamilyCompleter(this);
     //ui->searchbox->setCompleter(completer);
     //connect(ui->searchbox,SIGNAL(textEdited(QString)),completer,SLOT(update(QString)));
@@ -82,6 +88,11 @@ void TetherWindow::displayFullForCurrent(){
 
 TetherWindow::~TetherWindow()
 {
+    QSettings settings;
+    settings.beginGroup("MainWindow");
+    settings.setValue("size", size());
+    settings.setValue("pos", pos());
+    settings.endGroup();
     delete ui;
 }
 
