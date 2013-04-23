@@ -40,7 +40,8 @@ LIBS += -lgphoto2 \
     -lcurl \
     -lgphoto2_port \
     -ldl \
-    -lqjson
+    -lqjson \
+    -lexif
 
 TARGET = LBCPhotoTether
 
