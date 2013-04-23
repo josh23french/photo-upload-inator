@@ -8,6 +8,8 @@
 *.dll
 *.dylib
 
+*.DS_Store
+
 *.pro.user
 *.pro.user.*
 moc_*.cpp
