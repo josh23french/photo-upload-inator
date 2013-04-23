@@ -22,6 +22,7 @@
 #include <unistd.h>
 #include "settingsdialog.h"
 #include <QWindowStateChangeEvent>
+#include "photouploadinator.h"
 
 static int _lookup_widget(CameraWidget*widget, const char *key, CameraWidget **child)
 {
@@ -50,6 +51,8 @@ TetherWindow::TetherWindow(QWidget *parent) :
     }
 
     settings.endGroup();
+
+    ui->menuView->addAction(ui->dockWidget_2->toggleViewAction());
 
     //FamilyCompleter *completer = new FamilyCompleter(this);
     //ui->searchbox->setCompleter(completer);
@@ -324,41 +327,10 @@ void TetherWindow::on_actionCapture_triggered()
 {
     if(camera == NULL)
          return;
-    this->setEnabled(false);
-    QApplication::processEvents();
-
-    QThread *thread = new QThread();
-    MyThread *waiter = new MyThread();
-    waiter->moveToThread( thread );
-
-    QObject::connect( thread, SIGNAL(started()), waiter, SLOT(start()));
-    QObject::connect( waiter, SIGNAL(imageAvailable(QString, int)), this, SLOT(uploadImage(QString,int)));
-
-    waiter->setData(context,camera);
-    thread->start();
-    qDebug() << "Thread started";
-    //dialog.exec();
-    //qDebug() << "Dialog returned";
-    //thread.running = false;
-
-    //thread.mysleep(1);
-
-    //thread.quit();
-    /*
-    CameraFilePath cfp;
-    CameraFile *cf;
-
-    // Taking Image
-    result_check( gp_camera_capture( camera, GP_CAPTURE_IMAGE, &cfp, context ),"gp_camera_capture");
-
-    // Downloading Image
-    result_check( gp_file_new(&cf),"gp_file_new" );
-    result_check( gp_camera_file_get(camera, cfp.folder, cfp.name, GP_FILE_TYPE_NORMAL, cf, context),"gp_camera_file_get");
-
-    QString a = QString("Image Capture - ");
-    uploadImage(cf);
-    //setImage(cf, a);
-    //dialog.exec();*/
+    waiter->running = false;
+    waiter->mysleep(1);
+    thread->quit();
+    ui->stop->setEnabled(false);
 }
 
 int TetherWindow::writer(char *data, size_t size, size_t nmemb, std::string *buffer_in)
@@ -395,37 +367,7 @@ void TetherWindow::uploadImage(QString f, int fd)
     }
 
     logMessage("Uploading image...");
-    /*
-    CURL *curl;
-    CURLcode result;
-
-    curl = curl_easy_init();
-
-    char errorBuffer[CURL_ERROR_SIZE];
-    std::string buffer;
-    if (curl)
-    {
-        // Now set up all of the curl options
-        curl_easy_setopt(curl, CURLOPT_ERRORBUFFER, errorBuffer);
-        curl_easy_setopt(curl, CURLOPT_URL, "http://google.com");
-        curl_easy_setopt(curl, CURLOPT_HEADER, 0);
-        curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1);
-        curl_easy_setopt(curl, CURLOPT_COOKIEJAR, "cookies.txt");
-        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, TetherWindow::writer);
-        curl_easy_setopt(curl, CURLOPT_WRITEDATA, &buffer);
-
-        // Attempt to retrieve the remote page
-        result = curl_easy_perform(curl);
-
-        // Always cleanup
-        curl_easy_cleanup(curl);
-    }
-
-    if(result == CURLE_OK) {
-        logMessage("Upload complete.");
-    } else {
-        logMessage("Upload failed!!");
-    }*/
+    uploader.addUpload(f);
     ::close(fd);
 }
 
@@ -435,9 +377,21 @@ void TetherWindow::setFamily(QString fam, QString familyId)
     //this->family_id = mi.sibling(mi.row(), 1).data().toDouble();
     this->family_id = familyId.toDouble();
     ui->familyGrp->setTitle("Family: " + this->family.replace(" & "," && ") + " (" + QString::number(this->family_id) + ")");
-    //qDebug() << "setFamily() - - - - " << ui->searchbox->text();
-    //ui->searchbox->setText("HELP!");
-    //QTimer::singleShot(40, ui->searchbox, SLOT(clear()));
-    //qDebug() << "deletedText";
     emit familyChanged();
+    uploader.setFamily(familyId);
+    if(camera == NULL)
+         return;
+    QApplication::processEvents();
+
+    thread = new QThread();
+    waiter = new MyThread();
+    waiter->moveToThread( thread );
+
+    QObject::connect( thread, SIGNAL(started()), waiter, SLOT(start()));
+    QObject::connect( waiter, SIGNAL(imageAvailable(QString, int)), this, SLOT(uploadImage(QString,int)));
+
+    waiter->setData(context,camera);
+    thread->start();
+    ui->stop->setEnabled(true);
+    qDebug() << "Thread started";
 }

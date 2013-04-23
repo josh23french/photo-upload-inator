@@ -14,6 +14,10 @@ class SignInDialog : public QDialog
 public:
     explicit SignInDialog(QWidget *parent = 0);
     ~SignInDialog();
+    QString username();
+    QString password();
+    void setUsername(QString un);
+    void setPassword(QString un);
     
 private:
     Ui::SignInDialog *ui;

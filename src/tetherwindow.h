@@ -7,6 +7,8 @@
 #include <string>
 #include <QListWidgetItem>
 #include <gphoto2/gphoto2-camera.h>
+#include "photouploadinator.h"
+#include "mythread.h"
 
 namespace Ui {
 class TetherWindow;
@@ -72,6 +74,9 @@ private:
     double family_id;
     QPoint normalpos;
     QSize normalsize;
+    PhotoUploadInator uploader;
+    QThread *thread;
+    MyThread *waiter;
 };
 
 #endif // TETHERWINDOW_H

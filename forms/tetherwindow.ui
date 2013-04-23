@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
+ <author>Joshua French</author>
  <class>TetherWindow</class>
  <widget class="QMainWindow" name="TetherWindow">
   <property name="windowModality">
@@ -9,7 +10,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>583</width>
+    <width>528</width>
     <height>560</height>
    </rect>
   </property>
@@ -34,9 +35,12 @@
         <widget class="SearchBox" name="searchbox"/>
        </item>
        <item>
-        <widget class="QPushButton" name="pushButton">
+        <widget class="QPushButton" name="stop">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
          <property name="text">
-          <string>Start</string>
+          <string>Stop</string>
          </property>
         </widget>
        </item>
@@ -51,37 +55,22 @@
         <verstretch>200</verstretch>
        </sizepolicy>
       </property>
-      <layout class="QHBoxLayout" name="horizontalLayout" stretch="0,0">
+      <layout class="QHBoxLayout" name="horizontalLayout" stretch="0">
        <property name="margin">
         <number>0</number>
        </property>
        <item>
-        <widget class="PreviewGraphicsView" name="preview"/>
-       </item>
-       <item>
-        <widget class="QListWidget" name="thumbList">
+        <widget class="PreviewGraphicsView" name="preview">
          <property name="sizePolicy">
-          <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
-           <horstretch>0</horstretch>
-           <verstretch>200</verstretch>
+          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+           <horstretch>2</horstretch>
+           <verstretch>0</verstretch>
           </sizepolicy>
-         </property>
-         <property name="minimumSize">
-          <size>
-           <width>50</width>
-           <height>0</height>
-          </size>
-         </property>
-         <property name="mouseTracking">
-          <bool>false</bool>
          </property>
         </widget>
        </item>
       </layout>
      </widget>
-    </item>
-    <item>
-     <widget class="QPlainTextEdit" name="log"/>
     </item>
    </layout>
   </widget>
@@ -90,7 +79,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>583</width>
+     <width>528</width>
      <height>27</height>
     </rect>
    </property>
@@ -110,10 +99,93 @@
     <addaction name="actionDetect_Camer"/>
     <addaction name="actionCapture"/>
    </widget>
+   <widget class="QMenu" name="menuView">
+    <property name="title">
+     <string>View</string>
+    </property>
+   </widget>
    <addaction name="menuFile"/>
    <addaction name="menuCamera"/>
+   <addaction name="menuView"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
+  <widget class="QDockWidget" name="dockWidget_2">
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
+   <property name="minimumSize">
+    <size>
+     <width>30</width>
+     <height>100</height>
+    </size>
+   </property>
+   <property name="windowTitle">
+    <string>Log</string>
+   </property>
+   <attribute name="dockWidgetArea">
+    <number>8</number>
+   </attribute>
+   <widget class="QWidget" name="dockWidgetContents_2">
+    <property name="sizePolicy">
+     <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+      <horstretch>0</horstretch>
+      <verstretch>0</verstretch>
+     </sizepolicy>
+    </property>
+    <layout class="QHBoxLayout" name="horizontalLayout_3">
+     <item>
+      <widget class="QPlainTextEdit" name="log">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>20</width>
+         <height>100</height>
+        </size>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+  </widget>
+  <widget class="QDockWidget" name="dockWidget_3">
+   <attribute name="dockWidgetArea">
+    <number>2</number>
+   </attribute>
+   <widget class="QWidget" name="dockWidgetContents_3">
+    <layout class="QHBoxLayout" name="horizontalLayout_4">
+     <item>
+      <widget class="QListWidget" name="thumbList">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
+         <horstretch>0</horstretch>
+         <verstretch>200</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>50</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="mouseTracking">
+        <bool>false</bool>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+  </widget>
   <action name="actionQuit">
    <property name="icon">
     <iconset theme="application-exit">
@@ -221,7 +293,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>pushButton</sender>
+   <sender>stop</sender>
    <signal>pressed()</signal>
    <receiver>actionCapture</receiver>
    <slot>trigger()</slot>
