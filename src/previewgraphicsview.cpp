@@ -32,8 +32,12 @@ void PreviewGraphicsView::next()
 
 void PreviewGraphicsView::setPicture(QString filename) {
     if(item != NULL) {
-        delete item;
         //scene()->removeItem(item);
+        delete item;
+    }
+    if( filename == NULL ) {
+        item = NULL;
+       return;
     }
     item = new QGraphicsPixmapItem(QPixmap(filename));
     item->setTransformationMode(Qt::SmoothTransformation);

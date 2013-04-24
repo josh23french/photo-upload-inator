@@ -402,10 +402,10 @@ void TetherWindow::uploadImage(QString f, int fd)
 void TetherWindow::setFamily(QString fam, QString familyId)
 {
     this->family = fam;
-    //this->family_id = mi.sibling(mi.row(), 1).data().toDouble();
     this->family_id = familyId.toDouble();
     ui->familyGrp->setTitle("Family: " + this->family.replace(" & "," && ") + " (" + QString::number(this->family_id) + ")");
     emit familyChanged();
+    ui->preview->setPicture(NULL);
     uploader.setFamily(familyId);
     if( !startedThread ) {
         on_actionCapture_triggered();
