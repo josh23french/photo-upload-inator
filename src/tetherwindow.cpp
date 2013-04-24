@@ -39,6 +39,7 @@ TetherWindow::TetherWindow(QWidget *parent) :
     ui(new Ui::TetherWindow)
 {
     ui->setupUi(this);
+    startedThread = false;
 
     QSettings settings;
     settings.beginGroup("MainWindow");
@@ -52,7 +53,7 @@ TetherWindow::TetherWindow(QWidget *parent) :
 
     settings.endGroup();
 
-    ui->menuView->addAction(ui->dockWidget_2->toggleViewAction());
+    //ui->menuView->addAction(ui->dockWidget_2->toggleViewAction());
 
     //FamilyCompleter *completer = new FamilyCompleter(this);
     //ui->searchbox->setCompleter(completer);
@@ -320,17 +321,44 @@ int TetherWindow::result_check(int retval, QString message) {
 
 void TetherWindow::on_actionDetect_Camer_triggered()
 {
+    qDebug() << "Detecting camera...";
     rereadCameraInfo();
+    if( family_id && camera && !startedThread) {
+        qDebug() << "capturing...";
+        on_actionCapture_triggered();
+    }
 }
 
 void TetherWindow::on_actionCapture_triggered()
 {
-    if(camera == NULL)
-         return;
-    waiter->running = false;
-    waiter->mysleep(1);
-    thread->quit();
+    qDebug() << "Trigger";
+    if( startedThread ) {
+        qDebug() << "Stopping Process";
+        ui->stop->setEnabled(false);
+        qDebug() << "-4";
+        ui->stop->setText("Start");
+        qDebug() << "-3";
+        //if(camera == NULL)
+        //     return;
+        qDebug() << "-2";
+        waiter->running = false;
+        qDebug() << "-1";
+        waiter->mysleep(500);
+        qDebug() << "0";
+        thread->quit();
+        qDebug() << "1";
+        waiter->deleteLater();
+        qDebug() << "2";
+        ui->stop->setEnabled(true);
+        qDebug() << "3";
+        startedThread = false;
+        return;
+    }
+    qDebug() << "Starting Process";
     ui->stop->setEnabled(false);
+    ui->stop->setText("Stop");
+    startCapturing();
+    ui->stop->setEnabled(true);
 }
 
 int TetherWindow::writer(char *data, size_t size, size_t nmemb, std::string *buffer_in)
@@ -379,8 +407,20 @@ void TetherWindow::setFamily(QString fam, QString familyId)
     ui->familyGrp->setTitle("Family: " + this->family.replace(" & "," && ") + " (" + QString::number(this->family_id) + ")");
     emit familyChanged();
     uploader.setFamily(familyId);
-    if(camera == NULL)
-         return;
+    if( !startedThread ) {
+        on_actionCapture_triggered();
+    }
+}
+
+void TetherWindow::startCapturing()
+{
+    qDebug() << "startCapturing()";
+    if(camera == NULL) {
+        qDebug() << "... DON'T have camera ...";
+        on_actionDetect_Camer_triggered();
+        return;
+    }
+    qDebug() << "... have camera ...";
     QApplication::processEvents();
 
     thread = new QThread();
@@ -392,6 +432,8 @@ void TetherWindow::setFamily(QString fam, QString familyId)
 
     waiter->setData(context,camera);
     thread->start();
+    connect(waiter, SIGNAL(error()), this, SLOT(on_actionCapture_triggered()));
     ui->stop->setEnabled(true);
     qDebug() << "Thread started";
+    startedThread = true;
 }

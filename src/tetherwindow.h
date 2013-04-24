@@ -52,6 +52,7 @@ private slots:
     void on_actionCapture_triggered();
     void setFamily(QString fam, QString familyId);
     void writeGeometry();
+    void startCapturing();
 
 protected:
     void resizeEvent(QResizeEvent *event);
@@ -77,6 +78,7 @@ private:
     PhotoUploadInator uploader;
     QThread *thread;
     MyThread *waiter;
+    bool startedThread;
 };
 
 #endif // TETHERWINDOW_H

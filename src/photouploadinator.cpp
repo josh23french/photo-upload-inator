@@ -105,6 +105,8 @@ bool PhotoUploadInator::loggedIn()
         return true;
     }
     qDebug() << jsonreply << reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
+    if( reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt() == 0 )
+        return loggedIn();
     return false;
 }
 

@@ -23,7 +23,7 @@ public:
 
 signals:
     void imageAvailable(QString, int);
-
+    void error();
 
 private:
     GPContext *context;

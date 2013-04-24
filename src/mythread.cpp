@@ -2,9 +2,11 @@
 #include "mythread.h"
 #include <stdio.h>
 #include <fcntl.h>
+#include <unistd.h>
 
 MyThread::MyThread(QObject *parent) {
     qDebug() << "I'm Alive!!!";
+    running = false;
 }
 MyThread::~MyThread() {
     qDebug() << "I'm Dying!!!";
@@ -49,6 +51,7 @@ void MyThread::start()
         //qDebug() << "Waiting - retval: " << retval;
         if( retval != 0 ){
             qDebug() << "Error!! " << gp_result_as_string(retval);
+            emit error();
             break;
         }
         switch( type )
@@ -65,9 +68,11 @@ void MyThread::start()
             filename.append(".jpg");
             fd = open(filename.toLocal8Bit(), O_CREAT | O_WRONLY, 0644);
             retval = gp_file_new_from_fd(&file, fd);
+            qDebug() << "Read for file - " << gp_result_as_string(retval);
             retval = gp_camera_file_get(camera, cfp->folder, cfp->name, GP_FILE_TYPE_NORMAL, file, context);
-            retval = gp_camera_file_delete(camera, cfp->folder, cfp->name, context);
             qDebug() << "Got file - " << gp_result_as_string(retval);
+            retval = gp_camera_file_delete(camera, cfp->folder, cfp->name, context);
+            qDebug() << "Deleted file - " << gp_result_as_string(retval);
             emit imageAvailable(filename, fd);
             //qDebug() << "Emit Signal";
         case GP_EVENT_CAPTURE_COMPLETE:
@@ -79,5 +84,5 @@ void MyThread::start()
 
 void MyThread::mysleep(unsigned long time)
 {
-    //sleep(time);
+    usleep(time);
 }
