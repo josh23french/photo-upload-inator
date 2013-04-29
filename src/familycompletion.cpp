@@ -2,7 +2,7 @@
 #include "qjson/parser.h"
 #include <QSslError>
 
-#define AUTOCOMPLETE_URL "https://lbc-directory-0/autocomplete/?contains=%1"
+#define AUTOCOMPLETE_URL "https://www.jafrench.com/autocomplete/?contains=%1"
 
 
 FamilyCompletion::FamilyCompletion(QLineEdit *parent) : QObject(parent), editor(parent)
