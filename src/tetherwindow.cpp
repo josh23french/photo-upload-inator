@@ -357,8 +357,8 @@ void TetherWindow::on_actionCapture_triggered()
     qDebug() << "Starting Process";
     ui->stop->setEnabled(false);
     ui->stop->setText("Stop");
-    startCapturing();
     ui->stop->setEnabled(true);
+    startCapturing();
 }
 
 int TetherWindow::writer(char *data, size_t size, size_t nmemb, std::string *buffer_in)
