@@ -12,7 +12,8 @@ HEADERS += \
     forms/settingsdialog.h \
     src/photouploadinator.h \
     src/cookiejar.h \
-    src/autosaver.h
+    src/autosaver.h \
+    src/flowlayout.h
 SOURCES += \
     src/main.cpp \
     src/imagedisplaydialog.cpp \
@@ -28,7 +29,8 @@ SOURCES += \
     forms/settingsdialog.cpp \
     src/photouploadinator.cpp \
     src/cookiejar.cpp \
-    src/autosaver.cpp
+    src/autosaver.cpp \
+    src/flowlayout.cpp
 FORMS += forms/infodialog.ui \
     forms/imagedisplaydialog.ui \
     forms/settingsdialog.ui \
