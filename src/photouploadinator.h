@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QNetworkAccessManager>
 #include <QSslError>
+#include "cookiejar.h"
 
 class PhotoUploadInator : public QObject
 {
@@ -29,6 +30,7 @@ private:
     void getCSRF();
 
     QString familyId;
+    QString curfn;
 
     bool loggedIn();
     void startLoginProcess();
@@ -39,10 +41,12 @@ private:
 
     QList<QString> uploadQueue;
     bool uploading;
+    CookieJar *cj;
 
 private slots:
     void gotCredentials();
     void startUploading();
+    void maybeQuit();
 };
 
 #endif // PHOTOUPLOADER_H

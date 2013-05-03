@@ -16,11 +16,13 @@
 #include <QTimer>
 #include <QEventLoop>
 #include <QErrorMessage>
+#include <QMessageBox>
 #include "qjson/parser.h"
 #include <QSslError>
 #include <unistd.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <QLabel>
 
 PhotoUploadInator::PhotoUploadInator(QObject *parent) :
     QObject(parent)
@@ -28,10 +30,11 @@ PhotoUploadInator::PhotoUploadInator(QObject *parent) :
     qDebug() << "Start!";
     qnam = new QNetworkAccessManager(this);
     QObject::connect(qnam, SIGNAL(sslErrors(QNetworkReply *, QList<QSslError>)), this, SLOT(handleSslErrors(QNetworkReply *, QList<QSslError>)));
-    CookieJar *cj = new CookieJar(qnam);
+    cj = new CookieJar(qnam);
     qnam->setCookieJar(cj);
     //upload("/tmp/capt0000.jpg");
     QSettings settings;
+    password = "";
     username = settings.value("login/username", QString("")).toString();
     if( !loggedIn() ) {
         startLoginProcess();
@@ -60,6 +63,9 @@ void PhotoUploadInator::handleSslErrors(QNetworkReply *reply, QList<QSslError> e
 PhotoUploadInator::~PhotoUploadInator()
 {
     QSettings settings;
+    if( settings.value("Preferences/signoutonquit").toBool() ) {
+        cj->clear();
+    }
     settings.setValue("login/username", username);
 }
 
@@ -143,8 +149,11 @@ void PhotoUploadInator::startLoginProcess()
     el.exec();
     QString jsonreply = reply->readAll();
     reply->deleteLater();
+    qDebug() << jsonreply;
+    qDebug() << reply->header(QNetworkRequest::LocationHeader).toString();
     if( reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt() == 302 ) {
-        QMetaObject::invokeMethod(this, SLOT(startUploading()));
+        qDebug() << "This one!!";
+        QMetaObject::invokeMethod(this, SLOT(startUploading());
         return;
     }
     password = "";
@@ -152,14 +161,24 @@ void PhotoUploadInator::startLoginProcess()
     emd->showMessage("Invalid credentials! Please try again.");
     emd->setModal(true);
     emd->exec();
+    qDebug() << ";_;";
     startLoginProcess();
 }
 
 bool PhotoUploadInator::haveCredentials()
 {
-    if( username.isEmpty() or password.isEmpty() )
+    if( username == "" or password == "" )
         return false;
     return true;
+}
+
+void PhotoUploadInator::maybeQuit()
+{
+    qDebug() << "REJECTED()";
+    if( QMessageBox::Ok == QMessageBox::question((QWidget*)parent(), tr("Quit?"), tr("If you don't log in, you can't continue. Quit?"), QMessageBox::Ok, QMessageBox::Cancel)) {
+        exit(0);
+        qDebug() << "Y U NO QUIT()?";
+    }
 }
 
 void PhotoUploadInator::getCredentials()
@@ -168,7 +187,9 @@ void PhotoUploadInator::getCredentials()
     SignInDialog *sid = new SignInDialog();
     sid->setPassword(password); // Order is important here...
     sid->setUsername(username); // So password gets focus.
+    sid->setModal(true);
     connect(sid, SIGNAL(accepted()), this, SLOT(gotCredentials()));
+    connect(sid, SIGNAL(rejected()), this, SLOT(maybeQuit()));
     sid->exec();
     sid->deleteLater();
 }
@@ -184,6 +205,14 @@ void PhotoUploadInator::uploadComplete()
     qDebug() << "csrftoken=" << csrftoken;
     qDebug() << "sessionid=" << sessionid;
     QNetworkReply *reply = qobject_cast<QNetworkReply *>(QObject::sender());
+    if( reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt() == 403 ) {
+        qDebug() << "403 ERROR!";
+        password = "";
+        addUpload(curfn);
+        uploading = false;
+        startLoginProcess();
+        return;
+    }
     qDebug() << "---- Request Headers ----";
     foreach(QString f, reply->request().rawHeaderList()){
         qDebug() << f << ": " << reply->rawHeader(f.toLocal8Bit());
@@ -254,6 +283,7 @@ void PhotoUploadInator::getCSRF()
 
 void PhotoUploadInator::upload(QString filename)
 {
+    curfn = filename;
     QNetworkRequest test = QNetworkRequest(QUrl("https://www.jafrench.com/uploadphoto/"));
     test.setRawHeader("Referer", "https://www.jafrench.com/");
     test.setRawHeader("Origin", "https://www.jafrench.com");
