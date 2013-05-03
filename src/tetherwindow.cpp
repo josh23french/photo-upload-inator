@@ -16,7 +16,7 @@
 #include <QGraphicsScene>
 #include <QGraphicsPixmapItem>
 #include <QThread>
-#include <fastresizer.h>
+#include <src/fastresizer.h>
 #include <QTimer>
 #include "mythread.h"
 #include <unistd.h>
