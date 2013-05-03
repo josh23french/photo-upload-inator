@@ -153,7 +153,7 @@ void PhotoUploadInator::startLoginProcess()
     qDebug() << reply->header(QNetworkRequest::LocationHeader).toString();
     if( reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt() == 302 ) {
         qDebug() << "This one!!";
-        QMetaObject::invokeMethod(this, SLOT(startUploading());
+        QMetaObject::invokeMethod(this, SLOT(startUploading()));
         return;
     }
     password = "";
