@@ -3,9 +3,9 @@ HEADERS += \
     src/mythread.h \
     src/tetherthumb.h \
     src/tetherwindow.h \
-    abortablenetworkreply.h \
+    src/abortablenetworkreply.h \
     forms/signindialog.h \
-    fastresizer.h \
+    src/fastresizer.h \
     src/familycompletion.h \
     src/searchbox.h \
     src/previewgraphicsview.h \
@@ -19,9 +19,9 @@ SOURCES += \
     src/mythread.cpp \
     src/tetherthumb.cpp \
     src/tetherwindow.cpp \
-    abortablenetworkreply.cpp \
+    src/abortablenetworkreply.cpp \
     forms/signindialog.cpp \
-    fastresizer.cpp \
+    src/fastresizer.cpp \
     src/familycompletion.cpp \
     src/searchbox.cpp \
     src/previewgraphicsview.cpp \
