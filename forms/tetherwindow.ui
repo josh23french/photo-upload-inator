@@ -39,7 +39,7 @@
       <layout class="QHBoxLayout" name="horizontalLayout_2">
        <item>
         <widget class="SearchBox" name="searchbox"/>
-       </item>F
+       </item>
        <item>
         <widget class="QPushButton" name="stop">
          <property name="enabled">
