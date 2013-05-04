@@ -23,6 +23,7 @@
 #include "settingsdialog.h"
 #include <QWindowStateChangeEvent>
 #include "photouploadinator.h"
+#include "flowlayout.h"
 
 static int _lookup_widget(CameraWidget*widget, const char *key, CameraWidget **child)
 {
@@ -40,6 +41,13 @@ TetherWindow::TetherWindow(QWidget *parent) :
 {
     ui->setupUi(this);
     startedThread = false;
+
+    QWidget * thumbList = new QWidget(ui->scrollArea);
+    thumbList->setObjectName("thumbList");
+    ui->scrollArea->setWidget(thumbList);
+    ui->scrollArea->setWidgetResizable(true);
+    FlowLayout * fl = new FlowLayout();
+    thumbList->setLayout(fl);
 
     QSettings settings;
     settings.beginGroup("MainWindow");
@@ -118,9 +126,9 @@ void TetherWindow::showSettingsDialog()
     sd->deleteLater();
 }
 
-void TetherWindow::displayFullForThumb( QListWidgetItem * thumb)
+void TetherWindow::displayFullForThumb( TetherThumb * thumb)
 {
-    currentFilename = thumb->data(Qt::EditRole).toString();
+    currentFilename = thumb->filename;
     displayFullForFilename(currentFilename);
 }
 
@@ -137,24 +145,19 @@ void TetherWindow::displayFullForFilename( QString filename )
 void TetherWindow::displayThumbForTethered( const char * filename )
 {
     TetherThumb *label = new TetherThumb(filename, this);
-    QListWidgetItem *l = new QListWidgetItem();
-    l->setSizeHint(label->pixmap()->size());
-    l->setData(Qt::EditRole, filename);
-    ui->thumbList->insertItem(0,l);
-    ui->thumbList->setItemWidget(l, label);
-    //ui->scrollAreaWidgetContents->layout()->addWidget(label);
-    //ui->scrollAreaWidgetContents->layout()->setAlignment(label, Qt::AlignTop);
-    displayFullForThumb(l);
+    ui->scrollArea->widget()->layout()->addWidget(label);
+    connect(label, SIGNAL(clicked(TetherThumb *)), this, SLOT(displayFullForThumb(TetherThumb *)));
+    displayFullForThumb(label);
 }
 
 void TetherWindow::displayThumbForJPEG()
 {
-    //const char * filename = "/tmp/canon-ixus.jpg";
-    QByteArray la = ui->searchbox->text().toLatin1().constData();
-    const char * filename = la.constData();
-    qDebug() << filename;
-    TetherThumb *label = new TetherThumb(filename, this);
-    connect(label, SIGNAL(clicked(const char*)), this, SLOT(displayFullForThumb(const char*)));
+    //QByteArray la = ui->searchbox->text().toLatin1().constData();
+    //const char * filename = la.constData();
+    TetherThumb *label = new TetherThumb("/tmp/fileeZcvL5.jpg", ui->scrollArea->widget());
+    ui->scrollArea->widget()->layout()->addWidget(label);
+    //ui->scrollArea->widget()->layout()->addWidget();
+    connect(label, SIGNAL(clicked(TetherThumb *)), this, SLOT(displayFullForThumb(TetherThumb *)));
 }
 
 void TetherWindow::on_actionSign_in_triggered()

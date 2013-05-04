@@ -4,18 +4,18 @@
 #include <QSizePolicy>
 #include <QStyle>
 
-TetherThumb::TetherThumb(const char* filename, QWidget *parent) :
+TetherThumb::TetherThumb(QString const& fn, QWidget *parent) :
     QLabel(parent)
 {
-    this->setMouseTracking(true);
-    this->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
+    setMouseTracking(true);
+    setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
     qDebug() << "Got Filename:";
-    qDebug() << filename;
-    this->filename = std::string(filename);
+    qDebug() << fn;
+    filename = fn;
 
     ExifLoader *l = exif_loader_new();
     if(l){
-        exif_loader_write_file(l, filename);
+        exif_loader_write_file(l, fn.toLocal8Bit());
         ExifData *ed = exif_loader_get_data(l);
         exif_loader_unref(l);
         l = NULL;
@@ -34,5 +34,5 @@ TetherThumb::TetherThumb(const char* filename, QWidget *parent) :
 
 void TetherThumb::mousePressEvent( QMouseEvent *)
 {
-    emit clicked(this->filename.c_str());
+    emit clicked(this);
 }

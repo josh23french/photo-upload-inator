@@ -9,6 +9,7 @@
 #include <gphoto2/gphoto2-camera.h>
 #include "photouploadinator.h"
 #include "mythread.h"
+#include "tetherthumb.h"
 
 namespace Ui {
 class TetherWindow;
@@ -32,7 +33,7 @@ public:
 
 public slots:
     void displayThumbForJPEG();
-    void displayFullForThumb( QListWidgetItem * );
+    void displayFullForThumb(TetherThumb * );
     void displayThumbForTethered( const char *filename );
     void displayFullForFilename(QString filename );
     void displayFullForCurrent();

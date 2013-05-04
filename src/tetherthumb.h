@@ -7,11 +7,11 @@ class TetherThumb : public QLabel
 {
     Q_OBJECT
 public:
-    explicit TetherThumb(const char* filename, QWidget *parent = 0);
+    explicit TetherThumb(QString const& fn, QWidget *parent = 0);
     void mousePressEvent( QMouseEvent * e);
-    std::string filename;
+    QString filename;
 signals:
-    void clicked( const char * );
+    void clicked( TetherThumb* );
 public slots:
 
 };
