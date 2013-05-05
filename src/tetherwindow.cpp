@@ -42,12 +42,11 @@ TetherWindow::TetherWindow(QWidget *parent) :
     ui->setupUi(this);
     startedThread = false;
 
-    QWidget * thumbList = new QWidget(ui->scrollArea);
-    thumbList->setObjectName("thumbList");
-    ui->scrollArea->setWidget(thumbList);
+    QWidget * tl = new QWidget(ui->scrollArea);
+    ui->scrollArea->setWidget(tl);
     ui->scrollArea->setWidgetResizable(true);
-    FlowLayout * fl = new FlowLayout();
-    thumbList->setLayout(fl);
+    thumbList = new FlowLayout();
+    tl->setLayout(thumbList);
 
     QSettings settings;
     settings.beginGroup("MainWindow");
@@ -145,7 +144,7 @@ void TetherWindow::displayFullForFilename( QString filename )
 void TetherWindow::displayThumbForTethered( const char * filename )
 {
     TetherThumb *label = new TetherThumb(filename, this);
-    ui->scrollArea->widget()->layout()->addWidget(label);
+    thumbList->insertWidgetAt(label, 0);
     connect(label, SIGNAL(clicked(TetherThumb *)), this, SLOT(displayFullForThumb(TetherThumb *)));
     displayFullForThumb(label);
 }
@@ -155,7 +154,8 @@ void TetherWindow::displayThumbForJPEG()
     //QByteArray la = ui->searchbox->text().toLatin1().constData();
     //const char * filename = la.constData();
     TetherThumb *label = new TetherThumb("/tmp/fileeZcvL5.jpg", ui->scrollArea->widget());
-    ui->scrollArea->widget()->layout()->addWidget(label);
+    //ui->scrollArea->widget()->layout()->addWidget(label);
+    thumbList->insertWidgetAt(label, 0);
     //ui->scrollArea->widget()->layout()->addWidget();
     connect(label, SIGNAL(clicked(TetherThumb *)), this, SLOT(displayFullForThumb(TetherThumb *)));
 }
