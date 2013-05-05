@@ -52,6 +52,7 @@ public:
     ~FlowLayout();
 
     void addItem(QLayoutItem *item);
+    void insertWidgetAt(QWidget *widget, int index);
     int horizontalSpacing() const;
     int verticalSpacing() const;
     Qt::Orientations expandingDirections() const;

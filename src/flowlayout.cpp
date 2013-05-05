@@ -65,6 +65,12 @@ void FlowLayout::addItem(QLayoutItem *item)
     itemList.append(item);
 }
 
+void FlowLayout::insertWidgetAt(QWidget *widget, int index)
+{
+    QLayout::addChildWidget(widget);
+    itemList.insert(index, new QWidgetItem(widget));
+}
+
 int FlowLayout::horizontalSpacing() const
 {
     if (m_hSpace >= 0) {
