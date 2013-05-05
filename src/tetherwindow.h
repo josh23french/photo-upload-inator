@@ -10,6 +10,7 @@
 #include "photouploadinator.h"
 #include "mythread.h"
 #include "tetherthumb.h"
+#include "flowlayout.h"
 
 namespace Ui {
 class TetherWindow;
@@ -80,6 +81,7 @@ private:
     QThread *thread;
     MyThread *waiter;
     bool startedThread;
+    FlowLayout * thumbList;
 };
 
 #endif // TETHERWINDOW_H
