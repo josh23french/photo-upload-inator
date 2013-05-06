@@ -2,6 +2,7 @@
 #include "ui_settingsdialog.h"
 #include <QDebug>
 #include <QPushButton>
+#include <QFileDialog>
 
 SettingsDialog::SettingsDialog(QWidget *parent) :
     QDialog(parent),
@@ -12,6 +13,7 @@ SettingsDialog::SettingsDialog(QWidget *parent) :
     settings.beginGroup("Preferences");
     ui->signoutonquit->setChecked(settings.value("signoutonquit", true).toBool());
     ui->keeptempfiles->setChecked(settings.value("keeptempfiles", false).toBool());
+    ui->lineEdit->setText(settings.value("directory", "/tmp").toString());
     settings.endGroup();
     ui->buttons->button(QDialogButtonBox::Apply)->setEnabled(false);
     connect(ui->buttons, SIGNAL(clicked(QAbstractButton*)), this, SLOT(buttonHandler(QAbstractButton*)));
@@ -22,14 +24,16 @@ SettingsDialog::SettingsDialog(QWidget *parent) :
 void SettingsDialog::changed()
 {
     QSettings settings;
-    qDebug() << (ui->signoutonquit->isChecked() == settings.value("signoutonquit", true).toBool());
-    if( (ui->signoutonquit->isChecked() == settings.value("signoutonquit", true).toBool())
-            or (ui->keeptempfiles->isChecked() == settings.value("keeptempfiles", false).toBool()))
+    settings.beginGroup("Preferences");
+    if( (ui->signoutonquit->isChecked() != settings.value("signoutonquit", true).toBool())
+            or (ui->keeptempfiles->isChecked() != settings.value("keeptempfiles", false).toBool())
+            or (ui->lineEdit->text() != settings.value("directory", "/tmp").toString()))
     {
         ui->buttons->button(QDialogButtonBox::Apply)->setEnabled(true);
     } else {
         ui->buttons->button(QDialogButtonBox::Apply)->setEnabled(false);
     }
+    settings.endGroup();
 }
 
 void SettingsDialog::buttonHandler(QAbstractButton *button)
@@ -42,6 +46,7 @@ void SettingsDialog::buttonHandler(QAbstractButton *button)
         settings.beginGroup("Preferences");
         settings.setValue("signoutonquit", ui->signoutonquit->isChecked());
         settings.setValue("keeptempfiles", ui->keeptempfiles->isChecked());
+        settings.setValue("directory", ui->lineEdit->text());
         settings.endGroup();
         button->setEnabled(false);
         settings.sync();
@@ -59,4 +64,17 @@ void SettingsDialog::buttonHandler(QAbstractButton *button)
 SettingsDialog::~SettingsDialog()
 {
     delete ui;
+}
+
+void SettingsDialog::on_pushButton_pressed()
+{
+    QString initialDir = "/tmp";
+    if( !ui->lineEdit->text().isEmpty() ) {
+        initialDir = ui->lineEdit->text();
+    }
+    QString dir = QFileDialog::getExistingDirectory(this, tr("Choose Folder"), initialDir, QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
+    if( !dir.isNull() ) {
+        ui->lineEdit->setText(dir);
+        changed();
+    }
 }

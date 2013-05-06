@@ -21,6 +21,8 @@ private slots:
     void buttonHandler(QAbstractButton *button);
     void changed();
 
+    void on_pushButton_pressed();
+
 private:
     Ui::SettingsDialog *ui;
 };
