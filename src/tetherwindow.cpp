@@ -41,6 +41,7 @@ TetherWindow::TetherWindow(QWidget *parent) :
 {
     ui->setupUi(this);
     startedThread = false;
+    ui->menuView->addAction(ui->dockWidget->toggleViewAction());
 
     QWidget * tl = new QWidget(ui->scrollArea);
     ui->scrollArea->setWidget(tl);

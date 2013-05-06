@@ -78,7 +78,21 @@
          <number>0</number>
         </property>
         <item>
-         <widget class="QPlainTextEdit" name="log"/>
+         <widget class="QDockWidget" name="dockWidget">
+          <property name="features">
+           <set>QDockWidget::DockWidgetClosable</set>
+          </property>
+          <property name="windowTitle">
+           <string>Info Log</string>
+          </property>
+          <widget class="QWidget" name="dockWidgetContents">
+           <layout class="QVBoxLayout" name="verticalLayout_3">
+            <item>
+             <widget class="QPlainTextEdit" name="log"/>
+            </item>
+           </layout>
+          </widget>
+         </widget>
         </item>
         <item>
          <widget class="QScrollArea" name="scrollArea">
@@ -109,7 +123,6 @@
     <property name="title">
      <string>File</string>
     </property>
-    <addaction name="actionSign_in"/>
     <addaction name="actionSettings"/>
     <addaction name="actionQuit"/>
    </widget>
@@ -125,6 +138,7 @@
     <property name="title">
      <string>View</string>
     </property>
+    <addaction name="actionSecondary_Preview"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuCamera"/>
@@ -188,6 +202,19 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+Shift+S</string>
+   </property>
+  </action>
+  <action name="actionSecondary_Preview">
+   <property name="text">
+    <string>Secondary Preview</string>
+   </property>
+  </action>
+  <action name="actionInfo_Log">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Info Log</string>
    </property>
   </action>
  </widget>
@@ -266,6 +293,22 @@
     <hint type="destinationlabel">
      <x>291</x>
      <y>279</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionInfo_Log</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>log</receiver>
+   <slot>setVisible(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>452</x>
+     <y>231</y>
     </hint>
    </hints>
   </connection>
