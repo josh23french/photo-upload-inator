@@ -12,6 +12,6 @@ int main(int argc, char *argv[])
 
     TetherWindow tw;
     tw.show();
-    app.connect(&tw, SIGNAL(imageSaved( const char * )), &tw, SLOT(displayThumbForTethered( const char * )));
+    app.connect(&tw, SIGNAL(imageSaved(QString)), &tw, SLOT(displayThumbForTethered( QString )));
     return app.exec();
 }

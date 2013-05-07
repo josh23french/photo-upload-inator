@@ -11,6 +11,7 @@
 #include "mythread.h"
 #include "tetherthumb.h"
 #include "flowlayout.h"
+#include "previewgraphicsview.h"
 
 namespace Ui {
 class TetherWindow;
@@ -35,7 +36,7 @@ public slots:
     void logMessage(const QString message);
     void displayThumbForJPEG();
     void displayFullForThumb(TetherThumb * );
-    void displayThumbForTethered( const char *filename );
+    void displayThumbForTethered(QString filename );
     void displayFullForFilename(QString filename );
     void displayFullForCurrent();
 
@@ -46,7 +47,7 @@ public slots:
 
 signals:
     void familyChanged();
-    void imageSaved( const char * );
+    void imageSaved( QString );
 
 private slots:
     void on_actionSign_in_triggered();
@@ -55,6 +56,8 @@ private slots:
     void setFamily(QString fam, QString familyId);
     void writeGeometry();
     void startCapturing();
+
+    void on_actionSecondary_Preview_toggled(bool arg1);
 
 protected:
     void resizeEvent(QResizeEvent *event);
@@ -85,6 +88,7 @@ private:
     bool startedThread;
     FlowLayout * thumbList;
     int seq;
+    PreviewGraphicsView * mirrorDisplay;
 };
 
 #endif // TETHERWINDOW_H

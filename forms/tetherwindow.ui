@@ -205,6 +205,9 @@
    </property>
   </action>
   <action name="actionSecondary_Preview">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
    <property name="text">
     <string>Secondary Preview</string>
    </property>

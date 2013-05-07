@@ -9,9 +9,10 @@ class PreviewGraphicsView : public QGraphicsView
     Q_OBJECT;
 public:
     PreviewGraphicsView(QWidget* parent = NULL);
-    void setPicture(QString filename);
 public slots:
-    void next();
+    void setPicture(QString filename);
+signals:
+    void visibilityChanged(bool);
  
 protected:
     //Holds the current centerpoint for the view, used for panning and zooming
@@ -31,6 +32,7 @@ protected:
     virtual void wheelEvent(QWheelEvent* event);
     virtual void resizeEvent(QResizeEvent* event);
     virtual void mouseDoubleClickEvent(QMouseEvent *event);
+    virtual void closeEvent(QCloseEvent * ce);
     QGraphicsPixmapItem *item;
     bool itemFit;
 };

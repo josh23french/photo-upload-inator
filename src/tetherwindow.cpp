@@ -42,6 +42,8 @@ TetherWindow::TetherWindow(QWidget *parent) :
     ui->setupUi(this);
     startedThread = false;
     ui->menuView->addAction(ui->dockWidget->toggleViewAction());
+    mirrorDisplay = new PreviewGraphicsView(parent);
+    connect(mirrorDisplay, SIGNAL(visibilityChanged(bool)), ui->actionSecondary_Preview, SLOT(setChecked(bool)));
 
     QWidget * tl = new QWidget(ui->scrollArea);
     ui->scrollArea->setWidget(tl);
@@ -160,6 +162,9 @@ void TetherWindow::displayFullForThumb( TetherThumb * thumb)
 {
     currentFilename = thumb->filename;
     displayFullForFilename(currentFilename);
+    if( mirrorDisplay->isVisible() ) {
+        mirrorDisplay->setPicture(currentFilename);
+    }
 }
 
 void TetherWindow::displayFullForFilename( QString filename )
@@ -172,7 +177,7 @@ void TetherWindow::displayFullForFilename( QString filename )
     return;
 }
 
-void TetherWindow::displayThumbForTethered( const char * filename )
+void TetherWindow::displayThumbForTethered( QString filename )
 {
     TetherThumb *label = new TetherThumb(filename, this);
     thumbList->insertWidgetAt(label, 0);
@@ -436,7 +441,7 @@ void TetherWindow::uploadImage(QString f, int fd)
     ::close(fd);
     logMessage("Upload called.");
     f = moveImage(f);
-    emit imageSaved(f.toLocal8Bit());
+    emit imageSaved(f);
     this->setEnabled(true);
 
     if (this->family_id == 0)
@@ -494,4 +499,21 @@ void TetherWindow::startCapturing()
     ui->stop->setEnabled(true);
     qDebug() << "Thread started";
     startedThread = true;
+}
+
+void TetherWindow::on_actionSecondary_Preview_toggled(bool arg1)
+{
+    if(arg1) {
+        connect(this, SIGNAL(imageSaved(QString)), mirrorDisplay, SLOT(setPicture(QString)));
+        //mirrorDisplay->show();
+        mirrorDisplay->setPicture(currentFilename);
+        QRect screenres = QApplication::desktop()->screenGeometry(1);
+        mirrorDisplay->move(QPoint(screenres.x(), screenres.y()));
+        mirrorDisplay->resize(screenres.width(), screenres.height());
+        mirrorDisplay->showFullScreen();
+    } else {
+        mirrorDisplay->hide();
+        disconnect(this, SIGNAL(imageSaved(QString)), mirrorDisplay, SLOT(setPicture(QString)));
+    }
+    qDebug() << "Mirror display visibility: " << mirrorDisplay->isVisible();
 }

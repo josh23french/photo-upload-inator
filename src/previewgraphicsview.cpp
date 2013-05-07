@@ -24,10 +24,9 @@ PreviewGraphicsView::PreviewGraphicsView(QWidget* parent) : QGraphicsView(parent
     item = NULL;
 }
 
-void PreviewGraphicsView::next()
+void PreviewGraphicsView::closeEvent(QCloseEvent * ce)
 {
-    //qDebug() << "Second Pic";
-    setPicture("/tmp/filejO2Lc2.jpg");
+    emit visibilityChanged(false);
 }
 
 void PreviewGraphicsView::setPicture(QString filename) {
