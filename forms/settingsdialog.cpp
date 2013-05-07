@@ -19,6 +19,7 @@ SettingsDialog::SettingsDialog(QWidget *parent) :
     connect(ui->buttons, SIGNAL(clicked(QAbstractButton*)), this, SLOT(buttonHandler(QAbstractButton*)));
     connect(ui->signoutonquit, SIGNAL(toggled(bool)), this, SLOT(changed()));
     connect(ui->keeptempfiles, SIGNAL(toggled(bool)), this, SLOT(changed()));
+    connect(ui->lineEdit, SIGNAL(textChanged(QString)), this, SLOT(changed()));
 }
 
 void SettingsDialog::changed()
@@ -75,6 +76,5 @@ void SettingsDialog::on_pushButton_pressed()
     QString dir = QFileDialog::getExistingDirectory(this, tr("Choose Folder"), initialDir, QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
     if( !dir.isNull() ) {
         ui->lineEdit->setText(dir);
-        changed();
     }
 }
