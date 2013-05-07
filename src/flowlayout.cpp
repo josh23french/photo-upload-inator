@@ -60,6 +60,16 @@ FlowLayout::~FlowLayout()
         delete item;
 }
 
+void FlowLayout::clear()
+{
+    qDebug() << "DELETING ALL ITEMS!!!";
+    QLayoutItem *item;
+    while ((item = takeAt(0))) {
+        delete item->widget();
+        delete item;
+    }
+}
+
 void FlowLayout::addItem(QLayoutItem *item)
 {
     itemList.append(item);

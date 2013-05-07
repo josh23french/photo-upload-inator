@@ -29,10 +29,10 @@ class TetherWindow : public QMainWindow
 public:
     explicit TetherWindow(QWidget *parent = 0);
     ~TetherWindow();
-    void logMessage(const QString message);
     static int writer(char *data, size_t size, size_t nmemb, std::string *buffer_in);
 
 public slots:
+    void logMessage(const QString message);
     void displayThumbForJPEG();
     void displayFullForThumb(TetherThumb * );
     void displayThumbForTethered( const char *filename );
@@ -64,6 +64,8 @@ protected:
 private:
     int result_check(int retval, QString message = "");
     void canon_enable_capture(Camera *camera, GPContext *context, CameraWidget *config);
+    QString moveImage(QString f);
+    void maybeDeleteCurrentFamilyFiles();
 
     Ui::TetherWindow *ui;
     QTimer *resizeTimer;
@@ -82,6 +84,7 @@ private:
     MyThread *waiter;
     bool startedThread;
     FlowLayout * thumbList;
+    int seq;
 };
 
 #endif // TETHERWINDOW_H

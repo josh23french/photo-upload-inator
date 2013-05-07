@@ -17,7 +17,7 @@ public:
     bool addUpload(QString filename);
     void setFamily(QString fid);
 signals:
-    
+    void sendLog(QString);
 public slots:
     void uploadComplete();
     void handleSslErrors(QNetworkReply *, QList<QSslError>);

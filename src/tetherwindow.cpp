@@ -67,6 +67,7 @@ TetherWindow::TetherWindow(QWidget *parent) :
     //ui->searchbox->setCompleter(completer);
     //connect(ui->searchbox,SIGNAL(textEdited(QString)),completer,SLOT(update(QString)));
     connect(ui->searchbox->completer, SIGNAL(doneCompletion(QString,QString)), this, SLOT(setFamily(QString,QString)));
+    connect(&uploader, SIGNAL(sendLog(QString)), this, SLOT(logMessage(QString)));
     this->family_id = 0;
     context = NULL;
     camera = NULL;
@@ -112,11 +113,40 @@ void TetherWindow::writeGeometry()
 void TetherWindow::closeEvent(QCloseEvent *event)
 {
     writeGeometry();
+    maybeDeleteCurrentFamilyFiles();
 }
 
 TetherWindow::~TetherWindow()
 {
     delete ui;
+}
+
+void TetherWindow::maybeDeleteCurrentFamilyFiles()
+{
+    QSettings settings;
+    if( (family_id == NULL) or settings.value("Preferences/keeptempfiles").toBool() == true ) {
+        qDebug() << "family_id is null or keeptempfiles is true";
+        return;
+    }
+    qDebug() << "Attempting to delete files...";
+    QString dirName = settings.value("Preferences/directory", "/tmp").toString() + "/" + QString::number(family_id);
+    QDir dir(dirName);
+    bool result;
+    if (dir.exists(dirName)) {
+        Q_FOREACH(QFileInfo info, dir.entryInfoList(QDir::NoDotAndDotDot | QDir::System | QDir::Hidden  | QDir::AllDirs | QDir::Files, QDir::DirsFirst)) {
+            if (info.isDir()) {
+                qDebug() << "WHY IS THERE A DIRECTORY IN HERE?!";
+            }
+            else {
+                result = QFile::remove(info.absoluteFilePath());
+            }
+
+            if (!result) {
+                qDebug() << "Error!! Could not delete file!";
+            }
+        }
+        result = dir.rmdir(dirName);
+    }
 }
 
 void TetherWindow::showSettingsDialog()
@@ -380,10 +410,32 @@ int TetherWindow::writer(char *data, size_t size, size_t nmemb, std::string *buf
     return 0;
 }
 
+QString TetherWindow::moveImage(QString f)
+{
+    QDate date = QDate::currentDate();
+    QString dateString = date.toString("MMddyy");
+    seq +=1;
+    QSettings settings;
+    QDir dir(settings.value("Preferences/directory", "/tmp").toString() + "/" + QString::number(family_id));
+    if (!dir.exists()) {
+        dir.mkpath(".");
+    }
+    QString new_f =  dir.absolutePath() + "/" + QString::number(family_id) + "_" + dateString + "_" + QString::number(seq) + ".jpg";
+    QFile nf(new_f);
+    if( nf.exists() ) {
+        // This works because we increment the seq number. Is this worse than a while loop?
+        return moveImage(f);
+    }
+    logMessage("MOVED IMAGE!!! " + new_f );
+    QFile::rename(f, new_f);
+    return new_f;
+}
+
 void TetherWindow::uploadImage(QString f, int fd)
 {
+    ::close(fd);
     logMessage("Upload called.");
-
+    f = moveImage(f);
     emit imageSaved(f.toLocal8Bit());
     this->setEnabled(true);
 
@@ -400,13 +452,15 @@ void TetherWindow::uploadImage(QString f, int fd)
 
     logMessage("Uploading image...");
     uploader.addUpload(f);
-    ::close(fd);
 }
 
 void TetherWindow::setFamily(QString fam, QString familyId)
 {
+    maybeDeleteCurrentFamilyFiles();
+    thumbList->clear();
     this->family = fam;
     this->family_id = familyId.toDouble();
+    seq = 0;
     ui->familyGrp->setTitle("Family: " + this->family.replace(" & "," && ") + " (" + QString::number(this->family_id) + ")");
     emit familyChanged();
     ui->preview->setPicture(NULL);

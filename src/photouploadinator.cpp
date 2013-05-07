@@ -222,10 +222,12 @@ void PhotoUploadInator::uploadComplete()
         qDebug() << f << ": " << reply->rawHeader(f.toLocal8Bit());
     }
     qDebug() << "Status code: " << reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toString();
-    qDebug() << "--- --- --- --- ---\n" << reply->readAll() << "\n--- --- --- --- ---";
+    //qDebug() << "--- --- --- --- ---\n" << reply->readAll() << "\n--- --- --- --- ---";
     
     QJson::Parser *p = new QJson::Parser();
-    qDebug() << "Upload Complete! Status code: " << reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toString() << " New PhotoID: "<< p->parse(reply->readAll()).toMap().value("familyphoto").toString();
+    bool ok;
+    QVariantMap result = p->parse(reply->readAll(), &ok).toMap();
+    emit sendLog("Upload Complete! Status code: " + reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toString() + " New PhotoID: " + result["familyphoto"].toString());
     uploading = false;
     startUploading();
 }
