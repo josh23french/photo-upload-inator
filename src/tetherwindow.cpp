@@ -116,6 +116,7 @@ void TetherWindow::closeEvent(QCloseEvent *event)
 {
     writeGeometry();
     maybeDeleteCurrentFamilyFiles();
+    mirrorDisplay->close();
 }
 
 TetherWindow::~TetherWindow()
@@ -469,6 +470,7 @@ void TetherWindow::setFamily(QString fam, QString familyId)
     ui->familyGrp->setTitle("Family: " + this->family.replace(" & "," && ") + " (" + QString::number(this->family_id) + ")");
     emit familyChanged();
     ui->preview->setPicture(NULL);
+    mirrorDisplay->setPicture(NULL);
     uploader.setFamily(familyId);
     if( !startedThread ) {
         on_actionCapture_triggered();
@@ -505,11 +507,16 @@ void TetherWindow::on_actionSecondary_Preview_toggled(bool arg1)
 {
     if(arg1) {
         connect(this, SIGNAL(imageSaved(QString)), mirrorDisplay, SLOT(setPicture(QString)));
-        //mirrorDisplay->show();
+        mirrorDisplay->show();
         mirrorDisplay->setPicture(currentFilename);
         QRect screenres = QApplication::desktop()->screenGeometry(1);
+        qDebug() << screenres;
         mirrorDisplay->move(QPoint(screenres.x(), screenres.y()));
-        mirrorDisplay->resize(screenres.width(), screenres.height());
+        /*
+         * For some reason, the following causes an issue.. probably because the WM
+         * reserves height for the system menu
+        */
+        //mirrorDisplay->resize(screenres.width(), screenres.height());
         mirrorDisplay->showFullScreen();
     } else {
         mirrorDisplay->hide();

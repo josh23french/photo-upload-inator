@@ -22,6 +22,7 @@ PreviewGraphicsView::PreviewGraphicsView(QWidget* parent) : QGraphicsView(parent
     QGraphicsScene* Scene = new QGraphicsScene(this);
     setScene(Scene);
     item = NULL;
+    Scene->setBackgroundBrush(QBrush(Qt::black, Qt::SolidPattern));
 }
 
 void PreviewGraphicsView::closeEvent(QCloseEvent * ce)
