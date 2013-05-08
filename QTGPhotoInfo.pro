@@ -1,5 +1,4 @@
 HEADERS += \
-    src/imagedisplaydialog.h \
     src/mythread.h \
     src/tetherthumb.h \
     src/tetherwindow.h \
@@ -16,7 +15,6 @@ HEADERS += \
     src/flowlayout.h
 SOURCES += \
     src/main.cpp \
-    src/imagedisplaydialog.cpp \
     src/mythread.cpp \
     src/tetherthumb.cpp \
     src/tetherwindow.cpp \
@@ -31,8 +29,7 @@ SOURCES += \
     src/cookiejar.cpp \
     src/autosaver.cpp \
     src/flowlayout.cpp
-FORMS += forms/infodialog.ui \
-    forms/imagedisplaydialog.ui \
+FORMS += \
     forms/settingsdialog.ui \
     forms/tetherwindow.ui \
     forms/signindialog.ui
