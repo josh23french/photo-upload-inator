@@ -1,6 +1,7 @@
 #include "familycompletion.h"
 #include "qjson/parser.h"
 #include <QSslError>
+#include "cookiejar.h"
 
 #define AUTOCOMPLETE_URL "https://www.jafrench.com/autocomplete/?contains=%1"
 
@@ -36,6 +37,7 @@ FamilyCompletion::FamilyCompletion(QLineEdit *parent) : QObject(parent), editor(
 
     connect(&networkManager, SIGNAL(finished(QNetworkReply*)),
             this, SLOT(handleNetworkData(QNetworkReply*)));
+    networkManager.setCookieJar(new CookieJar(&networkManager));
 
 }
 
