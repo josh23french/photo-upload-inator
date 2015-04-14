@@ -2,7 +2,6 @@
 #include "ui_tetherwindow.h"
 #include <libexif/exif-loader.h>
 #include "tetherthumb.h"
-#include "imagedisplaydialog.h"
 #include <QDebug>
 #include <map>
 #include <iostream>
